@@ -2,7 +2,7 @@ import os
 import django
 import random
 from django.utils.timezone import now
-from brainwave.eventos_medicos.models import Examen, ImagenResonancia
+from eventos_medicos.models import Examen, ImagenResonancia
 
 # Configurar Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "brainwave.settings")
