@@ -12,4 +12,6 @@ urlpatterns = [
     path('resonancias/', views.lista_imagenes_resonancias, name='lista_imagenes_resonancias'),
     
     path('ver-resonancias/', views.vista_resonancias, name='vista_resonancias'),
+    
+    path('health-check/', views.healthCheck),
 ]
