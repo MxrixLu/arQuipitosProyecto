@@ -10,7 +10,7 @@ def index(request):
     return render(request, 'index.html')
 
 def healthCheck(request):
-    return HttpResponse('ok')
+    return JsonResponse({"status": "ok"})
 
 
 def cargar_imagen(request, examen_id):
