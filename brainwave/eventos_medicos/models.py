@@ -17,7 +17,7 @@ class ImagenResonancia(models.Model):
     medico = models.CharField(max_length=255, null=True, blank=True)  
     paciente = models.CharField(max_length=255, null=True, blank=True)  
     examen = models.ForeignKey(Examen, related_name='imagenes', on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to='resonancias/')
+    imagen = models.ImageField(upload_to='media/')
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
