@@ -18,7 +18,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from brainwave.brainwave import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('eventos-medicos/', include('eventos_medicos.urls')),
+    path("health-check/", views.health_check)
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,5 +13,4 @@ urlpatterns = [
     
     path('ver-resonancias/', views.vista_resonancias, name='vista_resonancias'),
     
-    path('health-check/', views.healthCheck),
 ]

@@ -4,13 +4,7 @@ from .models import Examen, ImagenResonancia
 from .forms import ImagenResonanciaForm
 from django.shortcuts import render
 from .models import Examen
-from django.shortcuts import render
-from django.http import HttpResponse
-def index(request):
-    return render(request, 'index.html')
 
-def healthCheck(request):
-    return JsonResponse({"status": "ok"})
 
 
 def cargar_imagen(request, examen_id):
