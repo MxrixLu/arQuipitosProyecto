@@ -1,1 +1,18 @@
+# Ignorar archivos sensibles
+.env
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Ignorar entornos virtuales
+venv/
 env/
+
+# Ignorar configuraciones de IDEs
+.vscode/
+.idea/
+*.swp
+
+# Ignorar credenciales en Google Cloud o AWS
+*.json
+*.pem
