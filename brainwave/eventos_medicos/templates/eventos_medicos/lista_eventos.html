@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonancias</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .imagen-container { display: flex; flex-wrap: wrap; justify-content: center; }
+        .resonancia-item { margin: 20px; text-align: center; }
+        .resonancia-item img { width: 300px; border-radius: 10px; }
+        .resonancia-item p { font-weight: bold; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Lista de Resonancias</h1>
+    <div class="imagen-container" id="imagenes"></div>
+
+    <script>
+        async function cargarResonancias() {
+            try {
+                const response = await fetch('/eventos-medicos/resonancias/');
+                const data = await response.json();  // Convierte la respuesta en JSON
+        
+                const container = document.getElementById('imagenes');  // Contenedor donde van las imágenes
+        
+                data.resonancias.forEach(resonancia => {
+                    let div = document.createElement('div');  // Contenedor de cada resonancia
+                    div.classList.add('resonancia-item');
+
+                    let nombre = document.createElement('p'); // Nombre del paciente
+                    nombre.textContent = `Paciente: ${resonancia.paciente}`;
+
+                    let img = document.createElement('img'); // Imagen de la resonancia
+                    img.src = resonancia.imagen;
+                    img.alt = "Imagen de resonancia";
+                    img.width = 300;
+
+                    div.appendChild(nombre);
+                    div.appendChild(img);
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error("Error cargando imágenes:", error);
+            }
+        }
+        
+        cargarResonancias();  // Llama a la función cuando se carga la página
+        
+    </script>
+</body>
+</html>
