@@ -2,7 +2,7 @@ import random
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.conf import settings
-from brainwave.brainwave.settings import BASE_DIR
+from brainwave.settings import BASE_DIR
 from .models import Examen, ImagenResonancia
 from .forms import ImagenResonanciaForm
 from django.shortcuts import render
@@ -69,3 +69,19 @@ def generar_imagenes(request):
         )
 
     return JsonResponse({'status': 'success', 'message': '10,000 imágenes generadas con pacientes diferentes.'})
+
+def eliminar_imagenes(request):
+    destino_dir = os.path.join(settings.MEDIA_ROOT, 'resonancias')
+
+    # Eliminar archivos de la carpeta resonancias
+    if os.path.exists(destino_dir):
+        for archivo in os.listdir(destino_dir):
+            if archivo.startswith("resonancia_paciente_") and archivo.endswith(".webp"):
+                archivo_path = os.path.join(destino_dir, archivo)
+                os.remove(archivo_path)
+    
+    # Eliminar los registros en la base de datos
+    ImagenResonancia.objects.filter(imagen__startswith="resonancias/resonancia_paciente_").delete()
+    Examen.objects.filter(descripcion="Examen generado automáticamente para prueba").delete()
+
+    return JsonResponse({'status': 'success', 'message': 'Imágenes y registros eliminados.'})
