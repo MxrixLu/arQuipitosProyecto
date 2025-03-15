@@ -13,4 +13,6 @@ urlpatterns = [
     
     path('ver-resonancias/', views.vista_resonancias, name='vista_resonancias'),
     
+    path('generar-imagenes/', views.generar_imagenes, name='generar_imagenes'),
+    
 ]
