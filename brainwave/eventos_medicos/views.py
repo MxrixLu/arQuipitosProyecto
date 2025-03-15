@@ -2,6 +2,7 @@ import random
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.conf import settings
+from brainwave.brainwave.settings import BASE_DIR
 from .models import Examen, ImagenResonancia
 from .forms import ImagenResonanciaForm
 from django.shortcuts import render
@@ -10,6 +11,8 @@ import shutil
 import os
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 def cargar_imagen(request, examen_id):
     examen = get_object_or_404(Examen, id=examen_id)
