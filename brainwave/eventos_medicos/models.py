@@ -22,3 +22,13 @@ class ImagenResonancia(models.Model):
 
     def __str__(self):
         return f"Imagen para {self.examen}"
+    
+class DiagnosticoMRI(models.Model):
+    medico = models.CharField(max_length=255)
+    paciente = models.CharField(max_length=255)
+    examen = models.ForeignKey('Examen', on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to='resonancias/')
+    analisis = models.TextField()
+
+    def __str__(self):
+        return f"{self.paciente} - {self.medico}"
