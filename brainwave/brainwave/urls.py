@@ -25,3 +25,4 @@ urlpatterns = [
     path('eventos-medicos/', include('eventos_medicos.urls')),
     path("health-check/", views.health_check)
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
