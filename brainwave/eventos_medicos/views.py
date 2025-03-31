@@ -86,7 +86,7 @@ def generar_diagnosticos_masivos(request):
     destino_dir = os.path.join(settings.MEDIA_ROOT, 'resonancias')
     os.makedirs(destino_dir, exist_ok=True)
 
-    imagen_base_path = os.path.join(destino_dir, 'resonancia_magnetica_base.webp')
+    imagen_base_path = os.path.join(destino_dir, 'imagen_1.png')
     if not os.path.exists(imagen_base_path):
         return JsonResponse({'error': 'No existe la imagen base en media/resonancias/'}, status=400)
 
@@ -101,10 +101,10 @@ def generar_diagnosticos_masivos(request):
 
     examenes = list(Examen.objects.all())
     nuevos_diagnosticos = []
-    for i in range(1, 1001):
+    for i in range(2, 100):
         nombre_paciente = f'Paciente_{i}'
         nombre_medico = f'Médico_{random.randint(1, 100)}'
-        nombre_archivo = f'resonancia_paciente_{i}.webp'
+        nombre_archivo = f'imagen_{i}.png'
         nueva_ruta = os.path.join(destino_dir, nombre_archivo)
         shutil.copy(imagen_base_path, nueva_ruta)
 
