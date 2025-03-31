@@ -66,6 +66,8 @@ def generar_imagenes(request):
             paciente=nombre_paciente,
             medico=f'Médico_{random.randint(1, 100)}'
         )
+        
+        generar_diagnostico_mri(examen.id)
 
     return JsonResponse({'status': 'success', 'message': '10,000 imágenes generadas con pacientes diferentes.'})
 
@@ -126,6 +128,9 @@ def generar_diagnosticos_masivos(request):
     DiagnosticoMRI.objects.bulk_create(nuevos_diagnosticos)
     
     return JsonResponse({'status': 'success', 'message': '1,000 diagnósticos generados.'})
+
+def generar_diagnostico_mri( examen_id):
+    pass
 
 def listar_diagnosticos(request):
     diagnosticos = DiagnosticoMRI.objects.select_related("examen").order_by('-id')
