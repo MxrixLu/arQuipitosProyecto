@@ -1,6 +1,6 @@
-## arQuipitosProyecto
+# arQuipitosProyecto
 
-# Desarrolladores:
+## Desarrolladores:
 
 - Maria Lucia Benavides
 - Kevin Andrés Castillo Peña
