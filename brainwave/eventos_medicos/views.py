@@ -48,7 +48,7 @@ def generar_imagenes(request):
     destino_dir = os.path.join(settings.MEDIA_ROOT, 'resonancias')
     os.makedirs(destino_dir, exist_ok=True)
     
-    for i in range(1, 10001):
+    for i in range(1, 8):
         nombre_paciente = f'Paciente_{i}' 
         nombre_archivo = f'resonancia_paciente_{i}.webp'
         nueva_ruta = os.path.join(destino_dir, nombre_archivo)
@@ -65,7 +65,8 @@ def generar_imagenes(request):
             examen=examen,
             imagen=f'resonancias/{nombre_archivo}',  
             paciente=nombre_paciente,
-            medico=f'Médico_{random.randint(1, 100)}'
+            medico=f'Médico_{random.randint(1, 100)}', 
+            descripcion= 'Se realizó exitosamente el MRI'
         )
         
         generar_diagnostico_mri(examen.id)
@@ -132,7 +133,7 @@ def generar_diagnosticos_masivos(request):
     
     return JsonResponse({'status': 'success', 'message': '1,000 diagnósticos generados.'})
 
-def generar_diagnostico_mri( examen_id):
+def generar_diagnostico_mri(examen_id):
     examen = get_object_or_404(Examen, id=examen_id)
     
     imagen_resonancia = ImagenResonancia.objects.filter(examen=examen).order_by('-fecha_subida').first()
@@ -160,7 +161,6 @@ def generar_diagnostico_mri( examen_id):
         analisis=analisis
     )
 
-    imagen_resonancia.descripcion = diagnostico.analisis  
     imagen_resonancia.diagnostico = diagnostico  
     imagen_resonancia.save()
 
