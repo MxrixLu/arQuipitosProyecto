@@ -19,6 +19,8 @@ class ImagenResonancia(models.Model):
     examen = models.ForeignKey(Examen, related_name='imagenes', on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='media/')
     fecha_subida = models.DateTimeField(auto_now_add=True)
+    descripcion = models.TextField(blank=True, null=True) 
+    diagnostico = models.OneToOneField('DiagnosticoMRI', null=True, blank=True, on_delete=models.SET_NULL) 
 
     def __str__(self):
         return f"Imagen para {self.examen}"

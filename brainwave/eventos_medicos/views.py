@@ -30,7 +30,8 @@ def ver_imagenes(request, examen_id):
 def lista_imagenes_resonancias(request):
     resonancias = ImagenResonancia.objects.all().order_by('-fecha_subida')
     data = [
-        {"id": r.id, "imagen": r.imagen.url, "fecha": r.fecha_subida, "paciente": r.paciente, "medico": r.medico}
+        {"id": r.id, "imagen": r.imagen.url, "fecha": r.fecha_subida, "paciente": r.paciente, "medico": r.medico, "descripcion": r.descripcion,  
+            "diagnostico_url": f"/diagnostico/{r.diagnostico.id}/" if r.diagnostico else None}
         for r in resonancias
     ]
     return JsonResponse({"resonancias": data})
@@ -59,7 +60,7 @@ def generar_imagenes(request):
             tipo_examen="Resonancia Magnética",
             descripcion="Examen generado automáticamente para prueba"
         )
-
+        
         ImagenResonancia.objects.create(
             examen=examen,
             imagen=f'resonancias/{nombre_archivo}',  
@@ -68,6 +69,8 @@ def generar_imagenes(request):
         )
         
         generar_diagnostico_mri(examen.id)
+        
+        
 
     return JsonResponse({'status': 'success', 'message': '10,000 imágenes generadas con pacientes diferentes.'})
 
@@ -130,7 +133,38 @@ def generar_diagnosticos_masivos(request):
     return JsonResponse({'status': 'success', 'message': '1,000 diagnósticos generados.'})
 
 def generar_diagnostico_mri( examen_id):
-    pass
+    examen = get_object_or_404(Examen, id=examen_id)
+    
+    imagen_resonancia = ImagenResonancia.objects.filter(examen=examen).order_by('-fecha_subida').first()
+    
+    if not imagen_resonancia:
+        print(f"No se encontró imagen para el examen {examen_id}")
+        return  
+
+    diagnosticos_texto = [
+        "El paciente presenta signos de epilepsia.",
+        "No se observan anomalías en la resonancia.",
+        "Posible indicio de tumor cerebral.",
+        "Se detectan áreas de inflamación en la corteza cerebral.",
+        "El paciente muestra signos de esclerosis múltiple.",
+        "Presencia de lesión vascular, posible ACV."
+    ]
+
+    analisis = random.choice(diagnosticos_texto)
+
+    diagnostico = DiagnosticoMRI.objects.create(
+        medico=imagen_resonancia.medico,
+        paciente=imagen_resonancia.paciente,
+        examen=examen,
+        imagen=imagen_resonancia.imagen,
+        analisis=analisis
+    )
+
+    imagen_resonancia.descripcion = diagnostico.analisis  
+    imagen_resonancia.diagnostico = diagnostico  
+    imagen_resonancia.save()
+
+    print(f"Imagen {imagen_resonancia.id} actualizada con diagnóstico: {imagen_resonancia.descripcion}")
 
 def listar_diagnosticos(request):
     diagnosticos = DiagnosticoMRI.objects.select_related("examen").order_by('-id')
