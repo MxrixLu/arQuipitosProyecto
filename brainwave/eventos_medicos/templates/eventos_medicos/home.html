@@ -3,6 +3,14 @@
 {% block title %}BrainWave - Inicio{% endblock %}
 
 {% block content %}
+<!-- Contenedor de mensajes -->
+<div id="messageContainer" class="message-container" style="display: none;">
+    <div class="message success">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span id="messageText"></span>
+    </div>
+</div>
+
 <div class="text-center mb-5">
     <h1 class="display-4 fw-bold text-primary mb-3">BrainWave</h1>
     <p class="lead">Sistema de Gestión de Imágenes y Diagnósticos Médicos</p>
@@ -101,5 +109,111 @@
             margin: 0 1rem;
         }
     }
+
+    /* Estilos para los mensajes */
+    .message-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        min-width: 300px;
+        text-align: center;
+    }
+
+    .message {
+        padding: 20px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        border-left: 4px solid #28a745;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .message.success {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    }
+
+    .message i {
+        font-size: 1.5rem;
+        color: #28a745;
+        margin-right: 10px;
+    }
+
+    .message span {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+    }
+
+    .message-show {
+        animation: slideIn 0.5s ease forwards;
+    }
+
+    .message-hide {
+        animation: slideOut 0.5s ease forwards;
+    }
 </style>
+
+<!-- Scripts para manejar los mensajes -->
+<script>
+function showMessage(message) {
+    const messageContainer = document.getElementById('messageContainer');
+    const messageText = document.getElementById('messageText');
+    
+    messageText.textContent = message;
+    messageContainer.style.display = 'block';
+    messageContainer.querySelector('.message').classList.add('message-show');
+
+    setTimeout(() => {
+        messageContainer.querySelector('.message').classList.add('message-hide');
+        setTimeout(() => {
+            messageContainer.style.display = 'none';
+            messageContainer.querySelector('.message').classList.remove('message-show', 'message-hide');
+        }, 500);
+    }, 3000);
+}
+
+// Modificar los event listeners existentes
+document.querySelectorAll('a[href*="generar"], a[href*="eliminar"]').forEach(link => {
+    link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(link.href);
+            const data = await response.json();
+            if (data.status === 'success') {
+                showMessage(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+});
+</script>
 {% endblock %} 
