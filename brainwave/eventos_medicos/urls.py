@@ -1,9 +1,10 @@
 from django.urls import path
 from . import views
 from django.http import HttpResponse
+from django.shortcuts import render
 
 def home(request):
-    return HttpResponse("<h1>Bienvenido a Brainwave</h1>")
+    return render(request, 'eventos_medicos/home.html')
 
 urlpatterns = [
     path('examen/<int:examen_id>/cargar-imagen/', views.cargar_imagen, name='cargar_imagen'),
