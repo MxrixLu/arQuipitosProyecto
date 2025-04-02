@@ -8,29 +8,9 @@
     <p class="lead">Sistema de Gestión de Imágenes y Diagnósticos Médicos</p>
 </div>
 
-<div class="row g-4">
-    <!-- Sección de Imágenes -->
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h3 class="card-title text-center mb-4">Imágenes</h3>
-                <div class="d-grid gap-3">
-                    <a href="{% url 'cargar_imagen' 1 %}" class="btn btn-outline-primary">
-                        <i class="bi bi-cloud-upload me-2"></i>Cargar Imagen
-                    </a>
-                    <a href="{% url 'lista_imagenes_resonancias' %}" class="btn btn-outline-success">
-                        <i class="bi bi-images me-2"></i>Ver Imágenes
-                    </a>
-                    <a href="{% url 'eliminar_imagenes' %}" class="btn btn-outline-danger">
-                        <i class="bi bi-trash me-2"></i>Eliminar Imágenes
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="row justify-content-center g-4">
     <!-- Sección de Resonancias -->
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card h-100">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">Resonancias</h3>
@@ -50,7 +30,7 @@
     </div>
 
     <!-- Sección de Diagnósticos -->
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card h-100">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">Diagnósticos</h3>
@@ -86,16 +66,40 @@
     .card-title {
         color: #2c3e50;
         font-weight: bold;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .card-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #3498db, #2ecc71);
+        border-radius: 2px;
     }
 
     .btn {
         padding: 0.75rem 1.25rem;
         font-weight: 500;
+        transition: all 0.3s ease;
     }
 
     .btn-outline-primary:hover, .btn-outline-success:hover, .btn-outline-danger:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (min-width: 768px) {
+        .row {
+            margin-top: 2rem;
+        }
+        .col-md-5 {
+            margin: 0 1rem;
+        }
     }
 </style>
 {% endblock %} 
