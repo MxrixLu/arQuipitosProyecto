@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Diagnósticos - BrainWave{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="mb-3">Diagnósticos MRI</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="medico" class="form-label">Filtrar por Médico</label>
+                        <input type="text" class="form-control" id="medico" name="medico" value="{{ request.GET.medico }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="paciente" class="form-label">Filtrar por Paciente</label>
+                        <input type="text" class="form-control" id="paciente" name="paciente" value="{{ request.GET.paciente }}">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                        {% if request.GET.medico or request.GET.paciente %}
+                            <a href="{% url 'lista_diagnosticos' %}" class="btn btn-secondary ms-2">Limpiar filtros</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if diagnosticos %}
+        {% for diagnostico in diagnosticos %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Diagnóstico #{{ diagnostico.id }}</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p><strong>Médico:</strong> {{ diagnostico.medico }}</p>
+                                <p><strong>Paciente:</strong> {{ diagnostico.paciente }}</p>
+                                <p><strong>Fecha del examen:</strong> {{ diagnostico.examen.fecha|date:"d/m/Y H:i" }}</p>
+                                <p class="mb-0"><strong>Análisis:</strong></p>
+                                <p class="text-muted">{{ diagnostico.analisis|linebreaks }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                {% if diagnostico.imagen %}
+                                    <img src="{{ diagnostico.imagen.url }}" class="img-fluid rounded" alt="Imagen MRI">
+                                {% else %}
+                                    <div class="text-center text-muted">
+                                        <p>Sin imagen</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No se encontraron diagnósticos{% if request.GET.medico or request.GET.paciente %} con los filtros aplicados{% endif %}.
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Navegación de páginas">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.medico %}&medico={{ request.GET.medico }}{% endif %}{% if request.GET.paciente %}&paciente={{ request.GET.paciente }}{% endif %}">Primera</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.medico %}&medico={{ request.GET.medico }}{% endif %}{% if request.GET.paciente %}&paciente={{ request.GET.paciente }}{% endif %}">Anterior</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item active">
+            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.medico %}&medico={{ request.GET.medico }}{% endif %}{% if request.GET.paciente %}&paciente={{ request.GET.paciente }}{% endif %}">Siguiente</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.medico %}&medico={{ request.GET.medico }}{% endif %}{% if request.GET.paciente %}&paciente={{ request.GET.paciente }}{% endif %}">Última</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %} 

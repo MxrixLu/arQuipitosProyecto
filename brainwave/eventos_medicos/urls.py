@@ -13,7 +13,7 @@ urlpatterns = [
     path('generar-imagenes/', views.generar_imagenes, name='generar_imagenes'),
     path('eliminar-imagenes/', views.eliminar_imagenes, name='eliminar_imagenes'),
     path('generar-diagnosticos/', views.generar_diagnosticos_masivos, name='generar_diagnosticos'),
-    path('listar-diagnosticos/', views.listar_diagnosticos, name='listar_diagnosticos'),
+    path('diagnosticos/', views.ListaDiagnosticosView.as_view(), name='lista_diagnosticos'),
     path('eliminar-diagnosticos/', views.eliminar_diagnosticos, name='eliminar_diagnosticos'),
     path("", home, name="home"),  # Página de inicio
 ]

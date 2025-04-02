@@ -7,6 +7,8 @@ from django.conf import settings
 from django.utils.timezone import now
 from .models import Examen, ImagenResonancia, DiagnosticoMRI
 from .forms import ImagenResonanciaForm
+from django.views.generic import ListView
+from django.db.models import Q
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'media')
@@ -166,20 +168,24 @@ def generar_diagnostico_mri(examen_id):
 
     print(f"Imagen {imagen_resonancia.id} actualizada con diagnóstico: {imagen_resonancia.descripcion}")
 
-def listar_diagnosticos(request):
-    diagnosticos = DiagnosticoMRI.objects.select_related("examen").order_by('-id')
-    data = [
-        {
-            "id": d.id,
-            "medico": d.medico,
-            "paciente": d.paciente,
-            "examen": d.examen.tipo_examen,
-            "imagen": d.imagen.url,
-            "analisis": d.analisis
-        }
-        for d in diagnosticos
-    ]
-    return JsonResponse({"diagnosticos": data})
+class ListaDiagnosticosView(ListView):
+    model = DiagnosticoMRI
+    template_name = 'eventos_medicos/lista_diagnosticos.html'
+    context_object_name = 'diagnosticos'
+    paginate_by = 10
+    ordering = ['-id']
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related('examen')
+        medico = self.request.GET.get('medico')
+        paciente = self.request.GET.get('paciente')
+        
+        if medico:
+            queryset = queryset.filter(medico__icontains=medico)
+        if paciente:
+            queryset = queryset.filter(paciente__icontains=paciente)
+            
+        return queryset
 
 def eliminar_diagnosticos(request):
     destino_dir = os.path.join(settings.MEDIA_ROOT, 'resonancias')
