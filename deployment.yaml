@@ -164,6 +164,7 @@ resources:
               sudo mkdir /app
               cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git .
+              cd brainwave # Entrar a la carpeta brainwave
               sudo pip3 install -r requirements.txt
               python3 manage.py makemigrations
               python3 manage.py migrate
@@ -198,6 +199,7 @@ resources:
               sudo mkdir /app
               cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git .
+              cd brainwave # Entrar a la carpeta brainwave
               sudo pip3 install -r requirements.txt
               python3 manage.py makemigrations
               python3 manage.py migrate
@@ -233,6 +235,7 @@ resources:
               sudo mkdir /app
               cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git .
+              cd brainwave # Entrar a la carpeta brainwave
               sudo pip3 install -r requirements.txt
               python3 manage.py makemigrations
               python3 manage.py migrate
