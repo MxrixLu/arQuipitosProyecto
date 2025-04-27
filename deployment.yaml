@@ -3,7 +3,7 @@ resources:
   - name: cbd-services-apps
     type: compute.v1.firewall
     properties:
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceTags:
@@ -17,7 +17,7 @@ resources:
   - name: cbd-services-apps-web
     type: compute.v1.firewall
     properties:
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceRanges:
@@ -31,7 +31,7 @@ resources:
   - name: cbd-circuit-breaker
     type: compute.v1.firewall
     properties:
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceRanges:
@@ -45,7 +45,7 @@ resources:
   - name: cbd-circuit-breaker-admin
     type: compute.v1.firewall
     properties:
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceRanges:
@@ -59,7 +59,7 @@ resources:
   - name: cbd-monitoring-db
     type: compute.v1.firewall
     properties:
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceTags:
@@ -75,7 +75,7 @@ resources:
     type: compute.v1.router
     properties:
       region: us-central1
-      network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       nats:
         - name: cbd-nat
           natIpAllocateOption: AUTO_ONLY
@@ -85,7 +85,7 @@ resources:
     name: cbd-kong-instance
     properties:
       zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
       disks:
         - deviceName: boot
           type: PERSISTENT
@@ -94,7 +94,7 @@ resources:
           initializeParams:
             sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           networkIP: 10.128.0.51
           accessConfigs:
             - name: External NAT
@@ -107,7 +107,7 @@ resources:
     name: cbd-db-instance
     properties:
       zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
       disks:
         - deviceName: boot
           type: PERSISTENT
@@ -116,7 +116,7 @@ resources:
           initializeParams:
             sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           networkIP: 10.128.0.52
       tags:
         items:
@@ -139,7 +139,7 @@ resources:
     name: cbd-django-a
     properties:
       zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
       disks:
         - deviceName: boot
           type: PERSISTENT
@@ -148,7 +148,7 @@ resources:
           initializeParams:
             sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           # No asignamos una IP externa directamente, el balanceador de carga se encargará de esto
       tags:
         items:
@@ -174,7 +174,7 @@ resources:
     name: cbd-django-b
     properties:
       zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
       disks:
         - deviceName: boot
           type: PERSISTENT
@@ -183,7 +183,7 @@ resources:
           initializeParams:
             sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           # No asignamos una IP externa directamente
       tags:
         items:
@@ -209,7 +209,7 @@ resources:
     name: cbd-django-c
     properties:
       zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
       disks:
         - deviceName: boot
           type: PERSISTENT
@@ -218,7 +218,7 @@ resources:
           initializeParams:
             sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           # No asignamos una IP externa directamente
       tags:
         items:
