@@ -241,37 +241,3 @@ resources:
               python3 manage.py migrate
               python3 manage.py collectstatic --noinput
               python3 manage.py runserver 0.0.0.0:8000
-  # Instancia de la Aplicación de Monitoreo (Sin cambios del ejemplo original)
-  - type: compute.v1.instance
-    name: cbd-monitoring-app
-    properties:
-      zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-      disks:
-        - deviceName: boot
-          type: PERSISTENT
-          boot: true
-          autoDelete: true
-          initializeParams:
-            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-      networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/tu-proyecto-id/global/networks/default # Reemplaza con tu Project ID
-          networkIP: 10.128.0.56
-      tags:
-        items:
-          - cbd-services-firewall
-      metadata:
-        items:
-          - key: startup-script
-            value: |
-              #!/bin/bash
-              sudo apt-get update
-              sudo apt install python3-pip -y
-              sudo mkdir /labs
-              cd /labs
-              sudo git clone https://github.com/ISIS2503/ISIS2503-MonitoringApp.git
-              cd ISIS2503-MonitoringApp
-              sudo git checkout Circuit-Breaker
-              sudo pip3 install -r requirements.txt
-              sudo python3 manage.py makemigrations
-              sudo python3 manage.py migrate
