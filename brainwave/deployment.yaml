@@ -161,8 +161,6 @@ resources:
               #!/bin/bash
               sudo apt-get update
               sudo apt install python3-pip -y
-              sudo mkdir /app
-              cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
               cd brainwave
               sudo pip3 install -r requirements.txt
@@ -196,8 +194,6 @@ resources:
               #!/bin/bash
               sudo apt-get update
               sudo apt install python3-pip -y
-              sudo mkdir /app
-              cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
               cd brainwave
               sudo pip3 install -r requirements.txt
