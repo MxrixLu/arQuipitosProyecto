@@ -4,9 +4,16 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .models import HistorialMedico
 import json
+#from monitoring.auth0backend import getRole
 
+
+#@login_required
 def ver_historial_medico(request, id=0):
-
+    """ 
+    role = getRole(request)
+    if role == "Medico":
+        
+    """
     historial = HistorialMedico.objects.raw("SELECT * FROM historial_medico_historialmedico WHERE id = %s" % id)[0]
     if not historial:
         messages.error(request, "No se encontró el historial médico.")
