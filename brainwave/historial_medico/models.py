@@ -3,7 +3,6 @@ from django.db import models
 # Create your models here.
 
 class HistorialMedico(models.Model):
-
     created_at = models.DateField(auto_now_add=True)
     paciente = models.CharField(max_length=100)
     fecha_nacimiento = models.DateField()
@@ -15,6 +14,3 @@ class HistorialMedico(models.Model):
     diagnostico = models.TextField()
     tratamiento = models.TextField()
     seguimiento = models.TextField()
-
-    def __str__(self):
-        return f"Historial de {self.paciente} - {self.fecha}"
