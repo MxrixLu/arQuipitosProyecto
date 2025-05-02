@@ -23,6 +23,6 @@ from brainwave import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('eventos-medicos/', include('eventos_medicos.urls')),
-    path("health-check/", views.health_check)
+    path("health/", views.health_check)
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
