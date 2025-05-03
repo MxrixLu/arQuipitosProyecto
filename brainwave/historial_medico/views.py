@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def ver_historial_medico(request, id=0): 
+    print("ver_historial_medico")
     role = getRole(request)
     if role == "Medico":
         historial = HistorialMedico.objects.raw("SELECT * FROM historial_medico_historialmedico WHERE id = %s" % id)[0]
