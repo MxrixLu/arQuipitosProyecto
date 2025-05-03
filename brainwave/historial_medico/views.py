@@ -7,7 +7,7 @@ import json
 from brainwave.auth0backend import getRole
 
 
-#@login_required
+@login_required
 def ver_historial_medico(request, id=0):
 
     role = getRole(request)
