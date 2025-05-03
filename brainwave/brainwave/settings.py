@@ -74,7 +74,10 @@ TEMPLATES = [
         },
     },
 ]
-
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.auth0.Auth0',  
+    'django.contrib.auth.backends.ModelBackend',
+)
 WSGI_APPLICATION = 'brainwave.wsgi.application'
 
 
