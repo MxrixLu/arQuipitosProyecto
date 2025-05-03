@@ -49,17 +49,20 @@ def getRole(request):
     user = request.user
     auth0user_qs = user.social_auth.filter(provider="auth0")
     if not auth0user_qs.exists():
-        return redirect('social:login')
+        return redirect('social:login')  
+    
     auth0user = auth0user_qs.first()
-    accessToken = auth0user.extra_data['access_token']
+    access_token = auth0user.extra_data['access_token']
+
     url = f"https://{AUTH0_DOMAIN}/userinfo"
     headers = {
-        'authorization': f"Bearer {accessToken}"
+        'Authorization': f'Bearer {access_token}'
     }
-
+    
     resp = requests.get(url, headers=headers)
     userinfo = resp.json()
-
-    role = userinfo.get(f"{AUTH0_DOMAIN}/role")
+    
+    role = userinfo.get("role") 
 
     return role
+

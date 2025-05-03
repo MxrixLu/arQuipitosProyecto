@@ -32,7 +32,7 @@ def ver_historial_medico(request, id=0):
 @login_required
 def ver_todo_historial(request):
     role = getRole(request)
-    if role == "Administrador hospital":
+    if role == "Medico":
         historial_list = list(HistorialMedico.objects.raw("SELECT * FROM historial_medico_historialmedico"))
         if not historial_list:
             messages.error(request, "No se encontró el historial médico.")
