@@ -1,5 +1,5 @@
 from django.db import models
-
+from eventos_medicos.models import Examen
 # Create your models here.
 
 class HistorialMedico(models.Model):
@@ -14,3 +14,4 @@ class HistorialMedico(models.Model):
     diagnostico = models.TextField()
     tratamiento = models.TextField()
     seguimiento = models.TextField()
+    eventos_medicos = models.ManyToManyField(Examen, related_name="historiales") 
