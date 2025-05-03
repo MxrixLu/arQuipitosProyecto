@@ -48,18 +48,15 @@ class Auth0(BaseOAuth2):
 # Esta función está fuera de la clase Auth0. Es independiente.
 def getRole(request):
     user = request.user
-    print("GET ROLEEEEEEEEEEE")
     if not user.is_authenticated:
         print("User is not authenticated")
         return redirect('social:begin', 'auth0')
     if not user.social_auth.exists():
         print("User social auth does not exist")
         return redirect('social:begin', 'auth0')
-    auth0user = user.social_auth.filter(provider="auth0")
-    print("AUTH0USER", auth0user)
-    
+    auth0user = user.social_auth.filter(provider="auth0")[0]  
 
-    accessToken = auth0user[0].extra_data['access_token'] 
+    accessToken = auth0user.extra_data['access_token'] 
     url = "https://f'{AUTH0_DOMAIN}/userinfo" 
     headers = {'authorization': 'Bearer ' + accessToken}
 
