@@ -49,6 +49,7 @@ class Auth0(BaseOAuth2):
 def getRole(request):
     user = request.user
     if not user.is_authenticated:
+        print("User is not authenticated")
         return redirect('social:begin', 'auth0')
     auth0user = user.social_auth.filter(provider="auth0")[0]
 
