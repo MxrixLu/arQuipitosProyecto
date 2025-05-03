@@ -1,6 +1,6 @@
 resources:
   # Reglas de Firewall
-  - name: firewall-brainwave-django
+  - name: django-instance
     type: compute.v1.firewall
     properties:
       network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
@@ -14,6 +14,34 @@ resources:
         - IPProtocol: TCP
           ports:
             - "8080"
+  - name: firewall-circuit-breaker
+    type: compute.v1.firewall
+    properties:
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+      priority: 1000
+      direction: INGRESS
+      sourceRanges:
+        - 0.0.0.0/0
+      targetTags:
+        - circuit-breaker
+      allowed:
+        - IPProtocol: TCP
+          ports: ["8000", "8001"]
+
+  - name: firewall-circuit-breaker-admin
+    type: compute.v1.firewall
+    properties:
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+      priority: 1000
+      direction: INGRESS
+      sourceRanges:
+        - 0.0.0.0/0
+      targetTags:
+        - cbd-circuit-breaker
+      allowed:
+        - IPProtocol: TCP
+          ports:
+            - "8001"
   - name: firewall-brainwave-db
     type: compute.v1.firewall
     properties:
@@ -38,27 +66,27 @@ resources:
           natIpAllocateOption: AUTO_ONLY
           sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES
   # # Instancia de Kong (Sin cambios del ejemplo original)
-  # - type: compute.v1.instance
-  #   name: kong-instance
-  #   properties:
-  #     zone: us-central1-a
-  #     machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-  #     disks:
-  #       - deviceName: boot
-  #         type: PERSISTENT
-  #         boot: true
-  #         autoDelete: true
-  #         initializeParams:
-  #           sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-  #     networkInterfaces:
-  #       - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-  #         networkIP: 10.128.0.51
-  #         accessConfigs:
-  #           - name: External NAT
-  #             type: ONE_TO_ONE_NAT
-  #     tags:
-  #       items:
-  #         - circuit-breaker
+  - type: compute.v1.instance
+    name: kong-instance
+    properties:
+      zone: us-central1-a
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+          networkIP: 10.128.0.51
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
+      tags:
+        items:
+          - circuit-breaker
   # Instancia de la Base de Datos (Sin cambios importantes del ejemplo original)
   - type: compute.v1.instance
     name: db-instance
@@ -95,7 +123,113 @@ resources:
               echo "max_connections=2000" | sudo tee -a /etc/postgresql/12/main/postgresql.conf
               sudo service postgresql restart
  
-  # Instancia de la Aplicación de Monitoreo (Sin cambios del ejemplo original)
+  - type: compute.v1.instance
+    name: instancia-a
+    properties:
+      zone: us-central1-a
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+          # No asignamos una IP externa directamente, el balanceador de carga se encargará de esto
+      tags:
+        items:
+          - firewall-circuit-breaker # Misma etiqueta que en el ejemplo original
+          - django-instance # Etiqueta para el balanceador de carga
+      metadata:
+        items:
+          - key: startup-script
+            value: |
+              #!/bin/bash
+              sudo apt-get update
+              sudo apt install python3-pip -y
+              sudo mkdir /app
+              cd /app
+              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
+              cd brainwave
+              sudo pip3 install -r requirements.txt
+              python3 manage.py makemigrations
+              python3 manage.py migrate
+              python3 manage.py collectstatic --noinput
+              python3 manage.py runserver 0.0.0.0:8000
+  - type: compute.v1.instance
+    name: instance-b
+    properties:
+      zone: us-central1-a
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+          # No asignamos una IP externa directamente
+      tags:
+        items:
+          - firewall-circuit-breaker # Misma etiqueta que en el ejemplo original
+          - django-instance # Etiqueta para el balanceador de carga
+      metadata:
+        items:
+          - key: startup-script
+            value: |
+              #!/bin/bash
+              sudo apt-get update
+              sudo apt install python3-pip -y
+              sudo mkdir /app
+              cd /app
+              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
+              cd brainwave
+              sudo pip3 install -r requirements.txt
+              python3 manage.py makemigrations
+              python3 manage.py migrate
+              python3 manage.py collectstatic --noinput
+              python3 manage.py runserver 0.0.0.0:8000
+  - type: compute.v1.instance
+    name: instance-c
+    properties:
+      zone: us-central1-a
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+          # No asignamos una IP externa directamente
+      tags:
+        items:
+          - firewall-circuit-breaker # Misma etiqueta que en el ejemplo original
+          - django-instance # Etiqueta para el balanceador de carga
+
+      metadata:
+        items:
+          - key: startup-script
+            value: |
+              #!/bin/bash
+              sudo apt-get update
+              sudo apt install python3-pip -y
+              sudo mkdir /app
+              cd /app
+              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
+              cd brainwave
+              sudo pip3 install -r requirements.txt
+              python3 manage.py makemigrations
+              python3 manage.py migrate
+              python3 manage.py collectstatic --noinput
+              python3 manage.py runserver 0.0.0.0:8000
+
   - type: compute.v1.instance
     name: brainwave-app-instance
     properties:
