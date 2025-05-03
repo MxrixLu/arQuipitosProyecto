@@ -137,7 +137,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = "/login/auth0"
+LOGIN_URL = "/auth/login/auth0/"
 LOGIN_REDIRECT_URL = "/"
 
 LOGOUT_REDIRECT_URL = f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo=http%3A%2F%2F{os.getenv('PUBLIC_INSTANCE_IP')}:8080"
