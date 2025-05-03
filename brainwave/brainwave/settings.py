@@ -74,10 +74,7 @@ TEMPLATES = [
         },
     },
 ]
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.auth0.Auth0',  
-    'django.contrib.auth.backends.ModelBackend',
-)
+
 WSGI_APPLICATION = 'brainwave.wsgi.application'
 
 
@@ -143,7 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "/login/auth0"
 LOGIN_REDIRECT_URL = "/"
 
-LOGOUT_REDIRECT_URL = f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo={os.getenv('PUBLIC_INSTANCE_IP')}"
+LOGOUT_REDIRECT_URL = f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo=http%3A%2F%2F{os.getenv('PUBLIC_INSTANCE_IP')}:8080"
 
 SOCIAL_AUTH_TRAILING_SLASH = False
 
@@ -157,4 +154,6 @@ SOCIAL_AUTH_AUTH0_SCOPE = [
     'email',
     'role',
 ]
-
+AUTHENTICATION_BACKENDS = { 
+                           'brainwave.auth0backend.Auth0', 
+                           'django.contrib.auth.backends.ModelBackend', }

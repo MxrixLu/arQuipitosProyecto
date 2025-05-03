@@ -2,7 +2,6 @@ import os
 import requests
 from django.shortcuts import redirect
 from social_core.backends.oauth import BaseOAuth2
-from social_django.models import UserSocialAuth
 
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 
@@ -47,22 +46,17 @@ class Auth0(BaseOAuth2):
 # Esta función está fuera de la clase Auth0. Es independiente.
 def getRole(request):
     user = request.user
-    auth0user_qs = user.social_auth.filter(provider="auth0")
-    if not auth0user_qs.exists():
-        return redirect('social:login')  
-    
-    auth0user = auth0user_qs.first()
-    access_token = auth0user.extra_data['access_token']
+    auth0user = user.social_auth.filter(provider="auth0")[0]
 
-    url = f"https://{AUTH0_DOMAIN}/userinfo"
-    headers = {
-        'Authorization': f'Bearer {access_token}'
-    }
-    
+    accessToken = auth0user.extra_data['access_token'] 
+    url = "https://dominio_auth0_tenant.auth0.com/userinfo" 
+    headers = {'authorization': 'Bearer ' + accessToken}
+
     resp = requests.get(url, headers=headers)
-    userinfo = resp.json()
-    
-    role = userinfo.get("role") 
 
-    return role
+    userinfo = resp.json()
+
+    role = userinfo['dominio_auth0_tenant.auth0.com/role']
+
+    return (role)
 
