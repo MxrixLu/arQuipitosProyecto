@@ -1,7 +1,8 @@
 import os
 import requests
+from django.shortcuts import redirect
 from social_core.backends.oauth import BaseOAuth2
-
+from social_django.models import UserSocialAuth
 
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 
@@ -48,7 +49,7 @@ def getRole(request):
     user = request.user
     auth0user_qs = user.social_auth.filter(provider="auth0")
     if not auth0user_qs.exists():
-        return "Sin rol"
+        return redirect('social:login')
     auth0user = auth0user_qs.first()
     accessToken = auth0user.extra_data['access_token']
     url = f"https://{AUTH0_DOMAIN}/userinfo"
