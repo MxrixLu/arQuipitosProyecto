@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from shlex import quote
 from dotenv import load_dotenv
 import os
 
@@ -137,11 +138,13 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = "/auth/login/auth0/"
+LOGIN_URL = "/login/auth0"
 LOGIN_REDIRECT_URL = "/"
 
-LOGOUT_REDIRECT_URL = f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo=http%3A%2F%2F{os.getenv('PUBLIC_INSTANCE_IP')}:8080"
-
+logout_url = f"http://{os.getenv('PUBLIC_INSTANCE_IP')}:8080"
+LOGOUT_REDIRECT_URL = (
+    f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo={quote(logout_url)}"
+)
 SOCIAL_AUTH_TRAILING_SLASH = False
 
 SOCIAL_AUTH_AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
