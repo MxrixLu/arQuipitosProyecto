@@ -52,6 +52,9 @@ def getRole(request):
     if not user.is_authenticated:
         print("User is not authenticated")
         return redirect('social:begin', 'auth0')
+    if not user.social_auth.exists():
+        print("User social auth does not exist")
+        return redirect('social:begin', 'auth0')
     auth0user = user.social_auth.filter(provider="auth0")
     print("AUTH0USER", auth0user)
     
