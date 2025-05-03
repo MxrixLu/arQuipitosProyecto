@@ -46,8 +46,10 @@ class Auth0(BaseOAuth2):
 # Esta función está fuera de la clase Auth0. Es independiente.
 def getRole(request):
     user = request.user
-    auth0user = user.social_auth.filter(provider="auth0")[0]
-
+    auth0user_qs = user.social_auth.filter(provider="auth0")
+    if not auth0user_qs.exists():
+        return "Sin rol"
+    auth0user = auth0user_qs.first()
     accessToken = auth0user.extra_data['access_token']
     url = f"https://{AUTH0_DOMAIN}/userinfo"
     headers = {
