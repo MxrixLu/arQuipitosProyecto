@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'eventos_medicos',
     'historial_medico',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -79,17 +80,6 @@ WSGI_APPLICATION = 'brainwave.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'brainwave_db',
-#         'USER':'brainwave_user',
-#         'PASSWORD': 'isis2503',
-#         'HOST': '10.128.0.52',
-#         'PORT':'5432',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -146,3 +136,27 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = "/login/auth0"
+LOGIN_REDIRECT_URL = "/"
+
+LOGOUT_REDIRECT_URL = f"https://{os.getenv('AUTH0_DOMAIN')}/v2/logout?returnTo={os.getenv('PUBLIC_INSTANCE_IP')}"
+
+SOCIAL_AUTH_TRAILING_SLASH = False
+
+SOCIAL_AUTH_AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
+SOCIAL_AUTH_AUTH0_KEY = os.getenv('AUTH0_CLIENT_ID')
+SOCIAL_AUTH_AUTH0_SECRET = os.getenv('AUTH0_CLIENT_SECRET')
+
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email',
+    'role',
+]
+
+AUTHENTICATION_BACKENDS = (
+    'monitoring.auth0backend.Auth0',
+    'django.contrib.auth.backends.ModelBackend',
+)
+

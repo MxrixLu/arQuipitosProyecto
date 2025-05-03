@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('eventos-medicos/', include('eventos_medicos.urls')),
     path('historial-medico/', include('historial_medico.urls')),
-    path("health/", views.health_check)
+    path("health/", views.health_check), 
+    path(r'', include('django.contrib.auth.urls')),
+    path(r'', include('social_django.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
