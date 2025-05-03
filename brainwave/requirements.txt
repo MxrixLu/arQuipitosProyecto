@@ -7,3 +7,4 @@ pytz
 sqlparse
 typing_extensions
 tzdata
+social-auth-app-django
