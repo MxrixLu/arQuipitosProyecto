@@ -1,4 +1,5 @@
 import os
+from django.urls import reverse
 import requests
 from django.shortcuts import redirect
 from social_core.backends.oauth import BaseOAuth2
@@ -47,6 +48,8 @@ class Auth0(BaseOAuth2):
 # Esta función está fuera de la clase Auth0. Es independiente.
 def getRole(request):
     user = request.user
+    if not user.is_authenticated:
+        return redirect(reverse('social:begin', args=['auth0']))
     auth0user = user.social_auth.filter(provider="auth0")[0]
 
     accessToken = auth0user.extra_data['access_token'] 
