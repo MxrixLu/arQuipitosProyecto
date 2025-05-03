@@ -5,9 +5,10 @@ from django.urls import reverse
 from .models import HistorialMedico
 import json
 from brainwave.auth0backend import getRole
+from django.contrib.auth.decorators import login_required
 
 
-#@login_required
+@login_required
 def ver_historial_medico(request, id=0): 
     role = getRole(request)
     if role == "Medico":
