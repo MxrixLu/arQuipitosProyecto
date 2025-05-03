@@ -1,110 +1,67 @@
 resources:
   # Reglas de Firewall
-  - name: cbd-services-apps
+  - name: firewall-brainwave-django
+    type: compute.v1.firewall
+    properties:
+      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+      priority: 1000
+      direction: INGRESS
+      sourceRanges:
+        - 0.0.0.0/0
+      targetTags:
+        - authd-django
+      allowed:
+        - IPProtocol: TCP
+          ports:
+            - "8080"
+  - name: firewall-brainwave-db
     type: compute.v1.firewall
     properties:
       network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       priority: 1000
       direction: INGRESS
       sourceTags:
-        - cbd-circuit-breaker
+        - authd-django
       targetTags:
-        - cbd-services-firewall
-      allowed:
-        - IPProtocol: TCP
-          ports:
-            - "8080"
-  - name: cbd-services-apps-web
-    type: compute.v1.firewall
-    properties:
-      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-      priority: 1000
-      direction: INGRESS
-      sourceRanges:
-        - 0.0.0.0/0
-      targetTags:
-        - cbd-services-firewall
-      allowed:
-        - IPProtocol: TCP
-          ports:
-            - "8080"
-  - name: cbd-circuit-breaker
-    type: compute.v1.firewall
-    properties:
-      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-      priority: 1000
-      direction: INGRESS
-      sourceRanges:
-        - 0.0.0.0/0
-      targetTags:
-        - cbd-circuit-breaker
-      allowed:
-        - IPProtocol: TCP
-          ports:
-            - "8000"
-  - name: cbd-circuit-breaker-admin
-    type: compute.v1.firewall
-    properties:
-      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-      priority: 1000
-      direction: INGRESS
-      sourceRanges:
-        - 0.0.0.0/0
-      targetTags:
-        - cbd-circuit-breaker
-      allowed:
-        - IPProtocol: TCP
-          ports:
-            - "8001"
-  - name: cbd-brainwave-db
-    type: compute.v1.firewall
-    properties:
-      network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-      priority: 1000
-      direction: INGRESS
-      sourceTags:
-        - cbd-services-firewall
-      targetTags:
-        - cbd-brainwave-db
+        - brainwave-db
       allowed:
         - IPProtocol: TCP
           ports:
             - "5432"
-  # Router y NAT (Sin cambios del ejemplo original, asumiendo que los necesitas)
-  - name: cbd-router
+  - name: router
     type: compute.v1.router
     properties:
       region: us-central1
       network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
       nats:
-        - name: cbd-nat
+        - name: nat
           natIpAllocateOption: AUTO_ONLY
           sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES
-  # Instancia de Kong (Sin cambios del ejemplo original)
-  - type: compute.v1.instance
-    name: cbd-kong-instance
-    properties:
-      zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-      disks:
-        - deviceName: boot
-          type: PERSISTENT
-          boot: true
-          autoDelete: true
-          initializeParams:
-            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-      networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-          networkIP: 10.128.0.51
-          accessConfigs:
-            - name: External NAT
-              type: ONE_TO_ONE_NAT
-      tags:
-        items:
-          - cbd-circuit-breaker
+  # # Instancia de Kong (Sin cambios del ejemplo original)
+  # - type: compute.v1.instance
+  #   name: kong-instance
+  #   properties:
+  #     zone: us-central1-a
+  #     machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
+  #     disks:
+  #       - deviceName: boot
+  #         type: PERSISTENT
+  #         boot: true
+  #         autoDelete: true
+  #         initializeParams:
+  #           sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+  #     networkInterfaces:
+  #       - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
+  #         networkIP: 10.128.0.51
+  #         accessConfigs:
+  #           - name: External NAT
+  #             type: ONE_TO_ONE_NAT
+  #     tags:
+  #       items:
+  #         - circuit-breaker
   # Instancia de la Base de Datos (Sin cambios importantes del ejemplo original)
   - type: compute.v1.instance
-    name: cbd-db-instance
+    name: db-instance
     properties:
       zone: us-central1-a
       machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
@@ -118,9 +75,12 @@ resources:
       networkInterfaces:
         - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           networkIP: 10.128.0.52
+          accessConfigs:
+          - name: External NAT
+            type: ONE_TO_ONE_NAT
       tags:
         items:
-          - cbd-brainwave-db
+          - brainwave-db
       metadata:
         items:
           - key: startup-script
@@ -134,116 +94,10 @@ resources:
               echo "listen_addresses='*'" | sudo tee -a /etc/postgresql/12/main/postgresql.conf
               echo "max_connections=2000" | sudo tee -a /etc/postgresql/12/main/postgresql.conf
               sudo service postgresql restart
-  # Instancias para la Aplicación Django (Balanceo de Carga)
-  - type: compute.v1.instance
-    name: cbd-django-a
-    properties:
-      zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-      disks:
-        - deviceName: boot
-          type: PERSISTENT
-          boot: true
-          autoDelete: true
-          initializeParams:
-            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-      networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-          # No asignamos una IP externa directamente, el balanceador de carga se encargará de esto
-      tags:
-        items:
-          - cbd-services-firewall # Misma etiqueta que en el ejemplo original
-          - cbd-django-instance # Etiqueta para el balanceador de carga
-      metadata:
-        items:
-          - key: startup-script
-            value: |
-              #!/bin/bash
-              sudo apt-get update
-              sudo apt install python3-pip -y
-              sudo mkdir /app
-              cd /app
-              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
-              cd brainwave
-              sudo pip3 install -r requirements.txt
-              python3 manage.py makemigrations
-              python3 manage.py migrate
-              python3 manage.py collectstatic --noinput
-              python3 manage.py runserver 0.0.0.0:8000
-  - type: compute.v1.instance
-    name: cbd-django-b
-    properties:
-      zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-      disks:
-        - deviceName: boot
-          type: PERSISTENT
-          boot: true
-          autoDelete: true
-          initializeParams:
-            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-      networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-          # No asignamos una IP externa directamente
-      tags:
-        items:
-          - cbd-services-firewall # Misma etiqueta que en el ejemplo original
-          - cbd-django-instance # Etiqueta para el balanceador de carga
-      metadata:
-        items:
-          - key: startup-script
-            value: |
-              #!/bin/bash
-              sudo apt-get update
-              sudo apt install python3-pip -y
-              sudo mkdir /app
-              cd /app
-              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
-              cd brainwave
-              sudo pip3 install -r requirements.txt
-              python3 manage.py makemigrations
-              python3 manage.py migrate
-              python3 manage.py collectstatic --noinput
-              python3 manage.py runserver 0.0.0.0:8000
-  - type: compute.v1.instance
-    name: cbd-django-c
-    properties:
-      zone: us-central1-a
-      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
-      disks:
-        - deviceName: boot
-          type: PERSISTENT
-          boot: true
-          autoDelete: true
-          initializeParams:
-            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
-      networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
-          # No asignamos una IP externa directamente
-      tags:
-        items:
-          - cbd-services-firewall # Misma etiqueta que en el ejemplo original
-          - cbd-django-instance # Etiqueta para el balanceador de carga
-
-      metadata:
-        items:
-          - key: startup-script
-            value: |
-              #!/bin/bash
-              sudo apt-get update
-              sudo apt install python3-pip -y
-              sudo mkdir /app
-              cd /app
-              sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
-              cd brainwave
-              sudo pip3 install -r requirements.txt
-              python3 manage.py makemigrations
-              python3 manage.py migrate
-              python3 manage.py collectstatic --noinput
-              python3 manage.py runserver 0.0.0.0:8000
+ 
   # Instancia de la Aplicación de Monitoreo (Sin cambios del ejemplo original)
   - type: compute.v1.instance
-    name: cbd-brainwave-app
+    name: brainwave-app-instance
     properties:
       zone: us-central1-a
       machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro # Reemplaza con tu Project ID
@@ -257,9 +111,12 @@ resources:
       networkInterfaces:
         - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default # Reemplaza con tu Project ID
           networkIP: 10.128.0.56
+          accessConfigs:
+          - name: External NAT
+            type: ONE_TO_ONE_NAT
       tags:
         items:
-          - cbd-services-firewall
+          - authd-django
       metadata:
         items:
           - key: startup-script
@@ -267,6 +124,8 @@ resources:
               #!/bin/bash
               sudo apt-get update
               sudo apt install python3-pip -y
+              sudo mkdir /app
+              cd /app
               sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
               cd brainwave
               sudo pip3 install -r requirements.txt
