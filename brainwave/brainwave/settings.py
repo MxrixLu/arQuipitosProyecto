@@ -67,6 +67,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'historial_medico', 'templates'),
             os.path.join(BASE_DIR, 'eventos_medicos', 'templates'),
+            os.path.join(BASE_DIR, 'brainwave', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

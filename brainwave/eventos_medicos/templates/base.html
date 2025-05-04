@@ -28,12 +28,15 @@
       .navbar-brand {
         font-weight: bold;
         color: var(--primary-color);
-        font-size: 1.5rem;
+        font-size: 1.25rem;
       }
 
       .navbar {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         background-color: white !important;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        min-height: 60px;
       }
 
       .card {
@@ -67,6 +70,16 @@
           padding: 3rem 2rem;
         }
       }
+
+      .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .navbar .container {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -84,9 +97,23 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <!-- Menú de navegación vacío por ahora -->
+          <ul class="navbar-nav me-auto">
+            <!-- Navigation items can go here -->
           </ul>
+          <div class="d-flex">
+            {% if user.is_authenticated %}
+              <div class="d-flex align-items-center">
+                <span class="me-3">{{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                  <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                </a>
+              </div>
+            {% else %}
+              <a href="{% url 'social:begin' 'auth0' %}" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+              </a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </nav>
