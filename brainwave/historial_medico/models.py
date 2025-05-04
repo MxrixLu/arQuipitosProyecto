@@ -14,4 +14,5 @@ class HistorialMedico(models.Model):
     diagnostico = models.TextField()
     tratamiento = models.TextField()
     seguimiento = models.TextField()
-    eventos_medicos = models.ManyToManyField(Examen, related_name="historiales") 
+    
+    eventos_medicos = models.ManyToManyField(Examen, related_name="historiales", blank=True)

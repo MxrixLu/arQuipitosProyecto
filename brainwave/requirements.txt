@@ -1,5 +1,5 @@
 asgiref
-Django
+django
 pillow
 psycopg2-binary
 python-dotenv
