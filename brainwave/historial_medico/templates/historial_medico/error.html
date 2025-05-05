@@ -1,0 +1,16 @@
+{% extends 'base.html' %} {% block title %}Error{% endblock title %} 
+{% block content %}
+<div class="container my-4">
+  <div class="card">
+    <div class="card-header bg-danger text-white">
+      <h2 class="mb-0">Error</h2>
+    </div>
+    <div class="card-body">
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-danger" role="alert">{{ message }}</div>
+      {% endfor %} {% endif %}
+      <a href="{% url 'historial_medico:solicitar_historial_medico' %}" class="btn btn-primary" >Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock content %}

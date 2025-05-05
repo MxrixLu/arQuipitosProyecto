@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block title %} Solicitar Historial Médico{% endblock title %} 
+{% block content %}
+<div class="container my-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Solicitar Historial Médico</h2>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+          <label for="historial_id">ID del Historial Médico</label>
+          <input
+            type="text"
+            class="form-control"
+            id="historial_id"
+            name="historial_id"
+            required
+          /> 
+        </div>
+        <div class="mt-3">
+          <button type="button" class="btn btn-primary" onclick="window.location.href = `/historial-medico/${document.getElementById('historial_id').value}/`;">Buscar Historial</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

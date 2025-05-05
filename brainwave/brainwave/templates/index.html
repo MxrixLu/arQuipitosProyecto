@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}BrainWave - Sistema de Gestión de Imágenes Médicas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-3">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-primary mb-3">BrainWave</h1>
+            <p class="lead mb-4">Sistema avanzado de gestión de imágenes médicas y diagnósticos neurológicos</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{% url 'vista_resonancias' %}" class="btn btn-primary btn-lg px-4 me-md-2">Ver Resonancias</a>
+                <a href="{% url 'lista_diagnosticos' %}" class="btn btn-outline-secondary btn-lg px-4">Ver Diagnósticos</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="text-center">
+                <i class="bi bi-brain display-1 text-primary"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-3 py-3">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-image text-primary display-4 mb-3"></i>
+                    <h3 class="card-title h4">Gestión de Imágenes</h3>
+                    <p class="card-text">Almacenamiento y visualización de resonancias magnéticas con alta calidad.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard2-pulse text-primary display-4 mb-3"></i>
+                    <h3 class="card-title h4">Diagnósticos</h3>
+                    <p class="card-text">Sistema integrado para la gestión y seguimiento de diagnósticos médicos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-check text-primary display-4 mb-3"></i>
+                    <h3 class="card-title h4">Seguridad</h3>
+                    <p class="card-text">Protección avanzada de datos médicos y control de acceso.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h2 class="mb-4">¿Necesitas acceder a un historial médico?</h2>
+            <a href="{% url 'historial_medico:solicitar_historial_medico' %}" class="btn btn-primary btn-lg">
+                Solicitar Historial Médico
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bi {
+        line-height: 1;
+    }
+    .card {
+        transition: transform 0.2s;
+        padding: 1rem;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .display-1 {
+        font-size: 6rem;
+    }
+    .container {
+        padding: 1rem 0.5rem;
+    }
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    .lead {
+        font-size: 1.1rem;
+    }
+    @media (min-width: 768px) {
+        .container {
+            padding: 1.5rem 1rem;
+        }
+        .display-4 {
+            font-size: 3rem;
+        }
+    }
+</style>
+{% endblock %}

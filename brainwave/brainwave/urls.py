@@ -19,12 +19,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
-from brainwave import views
-
 urlpatterns = [
+    path('', views.index, name='index'),  # Add this line for the landing page
     path('admin/', admin.site.urls),
     path('eventos-medicos/', include('eventos_medicos.urls')),
-    path('historial-medico/', include('historial_medico.urls')),
+    path('historial-medico/', include('historial_medico.urls', namespace='historial_medico')),
     path("health/", views.health_check), 
     path(r'', include('django.contrib.auth.urls')),
     path(r'', include('social_django.urls')),
