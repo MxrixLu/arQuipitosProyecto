@@ -16,6 +16,7 @@ def ver_historial_medico(request, id=0):
         try:
             historial = HistorialMedico.objects.get(id=id)
             eventos_medicos = historial.eventos_medicos.filter(medico=request.user)
+            print("paso el filter")
             if not eventos_medicos.exists():
                 raise HistorialMedico.DoesNotExist
         except HistorialMedico.DoesNotExist:
