@@ -1,5 +1,5 @@
 import datetime
-from eventos.logic import convert_str_to_datetime
+from eventos.utils import convert_str_to_datetime
 
 # Create your models here.
 

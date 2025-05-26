@@ -229,27 +229,3 @@ def delete_paciente(paciente_id):
         return Response({'error': 'Paciente not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def convert_str_to_datetime(date_str):
-    # Try with year, month, day first and with "/" and "-" as separators
-    try:
-        return datetime.datetime.strptime(date_str, '%Y-%m-%d')
-    except ValueError:
-        try:
-            return datetime.datetime.strptime(date_str, '%Y/%m/%d')
-        except ValueError:
-            try:
-                return datetime.datetime.strptime(date_str, '%d-%m-%Y')
-            except ValueError:
-                try:
-                    return datetime.datetime.strptime(date_str, '%d/%m/%Y')
-                except ValueError:
-                    try:
-                        return datetime.datetime.strptime(date_str, '%m-%d-%Y')
-                    except ValueError:
-                        try:
-                            return datetime.datetime.strptime(date_str, '%m/%d/%Y')
-                        except ValueError:
-                            return None
-
