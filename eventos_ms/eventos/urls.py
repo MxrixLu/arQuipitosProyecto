@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from .views import eventos, evento_detail, pacientes, paciente_detail, doctores, doctor_detail
+from .views import eventos, evento_detail, pacientes, paciente_detail, doctores, doctor_detail, doctores_by_paciente, pacientes_by_doctor, get_eventos_by_doctor, get_eventos_by_paciente
 
 urlpatterns = [
     url(r'^eventos/$', eventos),
@@ -14,5 +14,12 @@ urlpatterns = [
     url(r'^doctores/(?P<doctor_id>[a-zA-Z0-9]+)/$', doctor_detail),
     url(r'^doctores/(?P<doctor_id>[a-zA-Z0-9]+)/update/$', doctor_detail),
     url(r'^doctores/(?P<doctor_id>[a-zA-Z0-9]+)/delete/$', doctor_detail),
+
+    url(r'^pacientes/(?P<paciente_id>[a-zA-Z0-9]+)/doctores/$', doctores_by_paciente),
+    url(r'^doctores/(?P<doctor_id>[a-zA-Z0-9]+)/pacientes/$', pacientes_by_doctor),
+
+    url(r'^doctores/(?P<doctor_id>[a-zA-Z0-9]+)/eventos/$', get_eventos_by_doctor),
+    url(r'^pacientes/(?P<paciente_id>[a-zA-Z0-9]+)/eventos/$', get_eventos_by_paciente),
+
 
 ]

@@ -76,3 +76,34 @@ def doctor_detail(request, doctor_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+def doctores_by_paciente(request, paciente_id):
+    try:
+        if request.method == 'GET':
+            return logic.doctores_of_paciente(paciente_id)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def pacientes_by_doctor(request, doctor_id):
+    try:
+        if request.method == 'GET':
+            return logic.pacientes_of_doctor(doctor_id)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def get_eventos_by_paciente(request, paciente_id):
+    try:
+        if request.method == 'GET':
+            return logic.get_eventos_by_paciente(paciente_id)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def get_eventos_by_doctor(request, doctor_id):
+    try:
+        if request.method == 'GET':
+            return logic.get_eventos_by_doctor(doctor_id)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

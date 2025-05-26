@@ -229,3 +229,64 @@ def delete_paciente(paciente_id):
         return Response({'error': 'Paciente not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def pacientes_of_doctor(doctor_id):
+    try:
+        client = MongoClient(settings.MONGO_CLI)
+        db = client.eventos_db
+        eventos_collection = db['eventos']
+        pacientes_ids = []
+
+        eventos_cursor = eventos_collection.find({'doctor_id': ObjectId(doctor_id)})
+        for evento in eventos_cursor:
+            if 'paciente_id' in evento and evento['paciente_id'] not in pacientes_ids:
+                pacientes_ids.append(evento['paciente_id'])
+
+        client.close()
+        return Response(pacientes_ids, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def doctores_of_paciente(paciente_id):
+    try:
+        client = MongoClient(settings.MONGO_CLI)
+        db = client.eventos_db
+        eventos_collection = db['eventos']
+        doctores_ids = []
+        pacientes_cursor = eventos_collection.find({'paciente_id': ObjectId(paciente_id)})
+        for evento in pacientes_cursor:
+            if 'doctor_id' in evento and evento['doctor_id'] not in doctores_ids:
+                doctores_ids.append(evento['doctor_id'])
+
+        client.close()
+        return Response(doctores_ids, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def eventos_of_paciente(paciente_id):
+    try:
+        client = MongoClient(settings.MONGO_CLI)
+        db = client.eventos_db
+        eventos_collection = db['eventos']
+        
+        eventos_cursor = eventos_collection.find({'paciente_id': ObjectId(paciente_id)})
+        eventos = [Evento.from_mongo(doc).to_dict() for doc in eventos_cursor]
+        
+        client.close()
+        return Response(eventos, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def eventos_of_doctor(doctor_id):
+    try:
+        client = MongoClient(settings.MONGO_CLI)
+        db = client.eventos_db
+        eventos_collection = db['eventos']
+        
+        eventos_cursor = eventos_collection.find({'doctor_id': ObjectId(doctor_id)})
+        eventos = [Evento.from_mongo(doc).to_dict() for doc in eventos_cursor]
+        
+        client.close()
+        return Response(eventos, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
