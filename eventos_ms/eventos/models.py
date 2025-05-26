@@ -1,59 +1,74 @@
-from django.db import models
+import datetime
 
 # Create your models here.
 
-class Evento(models.Model):
+class Evento():
 
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    hora = models.TimeField()
-    lugar = models.CharField(max_length=100)
-    descripcion = models.TextField()
+    id = str()
+    nombre = str()
+    hora = datetime.time()
+    lugar = str()
+    descripcion = str()
+    tipo = str()
 
-    opciones_tipo = [
-        ('consulta', 'Consulta'),
-        ('examen', 'Examen'),
-        ('cirugia', 'Cirugía'),
-        ('prescripcion', 'Prescripción'),
-    ]
+    paciente = str()
+    doctor = str()
 
-
-    pacinete = models.ForeignKey('Paciente', on_delete=models.CASCADE)
-    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.nombre
     
-    def __str__(self):
-        return self.nombre
+    @staticmethod
+    def from_mongo(dto):
+        evento = Evento()
+        evento.id = dto.get('_id', str())
+        evento.nombre = dto.get('nombre', str())
+        evento.hora = dto.get('hora', datetime.time())
+        evento.lugar = dto.get('lugar', str())
+        evento.descripcion = dto.get('descripcion', str())
+        evento.paciente = dto.get('paciente', str())
+        evento.doctor = dto.get('doctor', str())
+        return evento
 
-class Paciente(models.Model):
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    edad = models.IntegerField()
-    opciones_sexo = [
-        ('masculino', 'Masculino'),
-        ('femenino', 'Femenino'),
-        ('otro', 'Otro'),
-    ]
-    sexo = models.CharField(max_length=10, choices=opciones_sexo)
-    direccion = models.CharField(max_length=200)
-    telefono = models.CharField(max_length=15)
-    email = models.EmailField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.nombre
-
-class Doctor(models.Model):
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    especialidad = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=15)
-    email = models.EmailField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class Paciente():
+    id = str()
+    nombre = str()
+    edad = int()
+    sexo = str()
+    direccion = str()
+    telefono = str()
+    email = str()
 
     def __str__(self):
         return self.nombre
+    
+    @staticmethod
+    def from_mongo(dto):
+        paciente = Paciente()
+        paciente.id = dto.get('_id', str())
+        paciente.nombre = dto.get('nombre', str())
+        paciente.edad = dto.get('edad', int())
+        paciente.sexo = dto.get('sexo', str())
+        paciente.direccion = dto.get('direccion', str())
+        paciente.telefono = dto.get('telefono', str())
+        paciente.email = dto.get('email', str())
+        return paciente
+
+class Doctor():
+    id = str()
+    nombre = str()
+    especialidad = str()
+    telefono = str()
+    email = str()
+
+    def __str__(self):
+        return self.nombre
+
+    @staticmethod
+    def from_mongo(dto):
+        doctor = Doctor()
+        doctor.id = dto.get('_id', str())
+        doctor.nombre = dto.get('nombre', str())
+        doctor.especialidad = dto.get('especialidad', str())
+        doctor.telefono = dto.get('telefono', str())
+        doctor.email = dto.get('email', str())
+        return doctor
