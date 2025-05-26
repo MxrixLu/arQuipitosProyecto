@@ -16,7 +16,7 @@ resources:
 - name: eventos-firewall-django
   type: compute.v1.firewall
   properties:
-    network: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/global/networks/default
+    network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
     priority: 1000
     direction: INGRESS
     sourceRanges: 
@@ -31,7 +31,7 @@ resources:
 - name: eventos-firewall-mongo
   type: compute.v1.firewall
   properties:
-    network: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/global/networks/default
+    network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
     priority: 1000
     direction: INGRESS
     sourceTags: 
@@ -48,7 +48,7 @@ resources:
   name: eventos-mongo-instance
   properties:
     zone: us-central1-a
-    machineType: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/zones/us-central1-a/machineTypes/e2-micro
+    machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro
     disks:
     - deviceName: boot
       type: PERSISTENT
@@ -57,7 +57,7 @@ resources:
       initializeParams:
         sourceImage: https://www.googleapis.com/compute/v1/projects/cos-cloud/global/images/cos-101-17162-386-64
     networkInterfaces:
-    - network: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/global/networks/default
+    - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
       networkIP: 10.128.0.80
       accessConfigs:
       - name: External NAT
@@ -71,7 +71,7 @@ resources:
   name: eventos-django-instance
   properties:
     zone: us-central1-a
-    machineType: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/zones/us-central1-a/machineTypes/e2-micro
+    machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro
     disks:
     - deviceName: boot
       type: PERSISTENT
@@ -80,7 +80,7 @@ resources:
       initializeParams:
         sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
     networkInterfaces:
-    - network: https://www.googleapis.com/compute/v1/projects/<id-proyecto>/global/networks/default
+    - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
       networkIP: 10.128.0.81
       accessConfigs:
       - name: External NAT
