@@ -12,6 +12,16 @@ def create_evento(data):
         client = MongoClient(settings.MONGO_CLI)
         db = client.eventos_db
         eventos_collection = db['eventos']
+
+        # Verify it paciente_id and doctor_id exist
+        if 'paciente_id' in data:
+            paciente = db['pacientes'].find_one({'_id': ObjectId(data['paciente_id'])})
+            if not paciente:
+                return Response({'error': 'Paciente not found'}, status=status.HTTP_404_NOT_FOUND)
+        if 'doctor_id' in data:
+            doctor = db['doctors'].find_one({'_id': ObjectId(data['doctor_id'])})
+            if not doctor:
+                return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
         
         result = eventos_collection.insert_one(data)
         client.close()

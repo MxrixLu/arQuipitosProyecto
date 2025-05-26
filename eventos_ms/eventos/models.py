@@ -11,8 +11,8 @@ class Evento():
     descripcion = str()
     tipo = str()
 
-    paciente = str()
-    doctor = str()
+    paciente_id = str()
+    doctor_id = str()
 
     def __str__(self):
         return self.nombre
@@ -25,8 +25,8 @@ class Evento():
         evento.hora = dto.get('hora', datetime.time())
         evento.lugar = dto.get('lugar', str())
         evento.descripcion = dto.get('descripcion', str())
-        evento.paciente = dto.get('paciente', str())
-        evento.doctor = dto.get('doctor', str())
+        evento.paciente_id = dto.get('paciente_id', str())
+        evento.doctor_id = dto.get('doctor_id', str())
         return evento
     
     def to_dict(self):
@@ -36,8 +36,8 @@ class Evento():
             'hora': self.hora.isoformat() if self.hora else None,
             'lugar': self.lugar,
             'descripcion': self.descripcion,
-            'paciente': self.paciente,
-            'doctor': self.doctor
+            'paciente_id': self.paciente_id,
+            'doctor_id': self.doctor_id
         }
 
 class Paciente():
