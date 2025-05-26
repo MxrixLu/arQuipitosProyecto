@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-rk7o3*!&#-$jlc6ggp$d+9*&8h&jj4db)0q-kse4a4sc#6d%@6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Permitir todos los hosts en desarrollo
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -123,4 +124,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MONGO_CLI = os.environ['MONGO_CLIENT']
+# MongoDB connection
+MONGO_CLI = os.environ.get('MONGO_CLIENT', 'mongodb://monitoring_user:isis2503@10.128.0.80:27017')
