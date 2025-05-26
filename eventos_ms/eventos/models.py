@@ -1,4 +1,5 @@
 import datetime
+from eventos.logic import convert_str_to_datetime
 
 # Create your models here.
 
@@ -24,20 +25,7 @@ class Evento():
         evento.id = dto.get('_id', str())
         evento.nombre = dto.get('nombre', str())
         fecha_str = dto.get('fecha')
-        if fecha_str:
-            try:
-                # Try parsing with day first
-                try:
-                    evento.fecha = datetime.datetime.strptime(fecha_str, '%d/%m/%Y').date()
-                except ValueError:
-                    # If that fails, try parsing with year first
-                    evento.fecha = datetime.datetime.strptime(fecha_str, '%Y/%m/%d').date()
-            except ValueError:
-                # If both formats fail, try with month first
-                evento.fecha = datetime.datetime.strptime(fecha_str, '%m/%d/%Y').date()
-        else:
-            evento.fecha = None
-
+        evento.fecha = convert_str_to_datetime(fecha_str) if fecha_str else datetime.date.today()
         hora_str = dto.get('hora')
         if hora_str:
             try:
