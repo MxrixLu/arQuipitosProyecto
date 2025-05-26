@@ -1,11 +1,16 @@
 import eventos.logic as logic
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 
 @api_view(['GET', 'POST'])
 def eventos(request):
-    if request.method == 'GET':
-        eventos = logic.get_eventos()
-        print(f"Retrieved {len(eventos)} eventos from the database.")
-        return JsonResponse([event.__dict__ for event in eventos], safe=False, status=200)
+    try:
+        if request.method == 'GET':
+            return logic.get_eventos()
+        elif request.method == 'POST':
+            data = JSONParser().parse(request)
+            return logic.create_evento(data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
