@@ -27,10 +27,16 @@ class Evento():
         if fecha_str:
             try:
                 # Try parsing with day first
-                evento.fecha = datetime.datetime.strptime(fecha_str, '%d/%m/%Y').date()
+                try:
+                    evento.fecha = datetime.datetime.strptime(fecha_str, '%d/%m/%Y').date()
+                except ValueError:
+                    # If that fails, try parsing with year first
+                    evento.fecha = datetime.datetime.strptime(fecha_str, '%Y-%m-%d').date()
             except ValueError:
-                # If that fails, try parsing with month first
+                # If both formats fail, try with month first
                 evento.fecha = datetime.datetime.strptime(fecha_str, '%m/%d/%Y').date()
+        else:
+            evento.fecha = None
 
         hora_str = dto.get('hora')
         if hora_str:
