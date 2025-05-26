@@ -31,7 +31,7 @@ class Evento():
                     evento.fecha = datetime.datetime.strptime(fecha_str, '%d/%m/%Y').date()
                 except ValueError:
                     # If that fails, try parsing with year first
-                    evento.fecha = datetime.datetime.strptime(fecha_str, '%Y-%m-%d').date()
+                    evento.fecha = datetime.datetime.strptime(fecha_str, '%Y/%m/%d').date()
             except ValueError:
                 # If both formats fail, try with month first
                 evento.fecha = datetime.datetime.strptime(fecha_str, '%m/%d/%Y').date()
