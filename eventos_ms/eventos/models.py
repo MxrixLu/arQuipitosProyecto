@@ -23,7 +23,15 @@ class Evento():
         evento = Evento()
         evento.id = dto.get('_id', str())
         evento.nombre = dto.get('nombre', str())
-        evento.fecha = dto.get('fecha', datetime.date.today())
+        fecha_str = dto.get('fecha')
+        if fecha_str:
+            try:
+                # Try parsing with day first
+                evento.fecha = datetime.datetime.strptime(fecha_str, '%d/%m/%Y').date()
+            except ValueError:
+                # If that fails, try parsing with month first
+                evento.fecha = datetime.datetime.strptime(fecha_str, '%m/%d/%Y').date()
+
         hora_str = dto.get('hora')
         if hora_str:
             try:
