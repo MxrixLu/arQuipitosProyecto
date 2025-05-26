@@ -44,6 +44,7 @@ class Evento():
         return {
             'id': str(self.id),
             'nombre': self.nombre,
+            'fecha': self.fecha.isoformat() if self.fecha else None,
             'hora': self.hora.isoformat() if self.hora else None,
             'lugar': self.lugar,
             'descripcion': self.descripcion,
