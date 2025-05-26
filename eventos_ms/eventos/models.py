@@ -6,6 +6,7 @@ class Evento():
 
     id = str()
     nombre = str()
+    fecha = datetime.date.today()
     hora = datetime.time()
     lugar = str()
     descripcion = str()
@@ -22,8 +23,17 @@ class Evento():
         evento = Evento()
         evento.id = dto.get('_id', str())
         evento.nombre = dto.get('nombre', str())
+        evento.fecha = dto.get('fecha', datetime.date.today())
         hora_str = dto.get('hora')
-        evento.hora = datetime.datetime.strptime(hora_str, '%H:%M:%S').time() if hora_str else None
+        if hora_str:
+            try:
+                # Try parsing with seconds first
+                evento.hora = datetime.datetime.strptime(hora_str, '%H:%M:%S').time()
+            except ValueError:
+                # If that fails, try parsing without seconds
+                evento.hora = datetime.datetime.strptime(hora_str, '%H:%M').time()
+        else:
+            evento.hora = None
         evento.lugar = dto.get('lugar', str())
         evento.descripcion = dto.get('descripcion', str())
         evento.paciente_id = dto.get('paciente_id', str())
