@@ -22,7 +22,8 @@ class Evento():
         evento = Evento()
         evento.id = dto.get('_id', str())
         evento.nombre = dto.get('nombre', str())
-        evento.hora = dto.get('hora', datetime.time())
+        hora_str = dto.get('hora')
+        evento.hora = datetime.datetime.strptime(hora_str, '%H:%M:%S').time() if hora_str else None
         evento.lugar = dto.get('lugar', str())
         evento.descripcion = dto.get('descripcion', str())
         evento.paciente_id = dto.get('paciente_id', str())
