@@ -28,6 +28,17 @@ class Evento():
         evento.paciente = dto.get('paciente', str())
         evento.doctor = dto.get('doctor', str())
         return evento
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'nombre': self.nombre,
+            'hora': self.hora.isoformat() if self.hora else None,
+            'lugar': self.lugar,
+            'descripcion': self.descripcion,
+            'paciente': self.paciente,
+            'doctor': self.doctor
+        }
 
 class Paciente():
     id = str()

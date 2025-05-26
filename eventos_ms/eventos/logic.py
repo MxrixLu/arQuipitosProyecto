@@ -27,8 +27,8 @@ def get_eventos():
         client = MongoClient(settings.MONGO_CLI)
         db = client.eventos_db
         eventos_collection = db['eventos']
-        eventos_collection = eventos_collection.find({})
-        eventos = [Evento.from_mongo(doc) for doc in eventos_collection]
+        eventos_cursor = eventos_collection.find({})
+        eventos = [Evento.from_mongo(doc).to_dict() for doc in eventos_cursor]
         client.close()
         return Response(eventos, status=status.HTTP_200_OK)
     except Exception as e:
