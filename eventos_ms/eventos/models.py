@@ -63,6 +63,17 @@ class Paciente():
         paciente.telefono = dto.get('telefono', str())
         paciente.email = dto.get('email', str())
         return paciente
+    
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'nombre': self.nombre,
+            'edad': self.edad,
+            'sexo': self.sexo,
+            'direccion': self.direccion,
+            'telefono': self.telefono,
+            'email': self.email
+        }
 
 class Doctor():
     id = str()
@@ -73,6 +84,15 @@ class Doctor():
 
     def __str__(self):
         return self.nombre
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'nombre': self.nombre,
+            'especialidad': self.especialidad,
+            'telefono': self.telefono,
+            'email': self.email
+        }
 
     @staticmethod
     def from_mongo(dto):
