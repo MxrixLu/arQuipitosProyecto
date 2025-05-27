@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field, GetJsonSchemaHandler
-from pydantic.json_schema import JsonSchemaValue
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional, Any, Annotated
 from bson import ObjectId
@@ -16,8 +15,12 @@ class PyObjectId(ObjectId):
         return ObjectId(v)
 
     @classmethod
-    def __get_pydantic_json_schema__(cls, _schema_generator: GetJsonSchemaHandler) -> JsonSchemaValue:
-        return {"type": "string"}
+    def __get_pydantic_core_schema__(cls, _source_type, _handler):
+        return {
+            "type": "string",
+            "description": "ObjectId",
+            "custom_validator": lambda x: ObjectId(x) if isinstance(x, str) else x
+        }
 
 class MRI(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
