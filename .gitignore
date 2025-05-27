@@ -6,6 +6,7 @@ db.sqlite3
 
 # Ignorar entornos virtuales
 venv/
+node_modules/
 env/
 
 # Ignorar configuraciones de IDEs

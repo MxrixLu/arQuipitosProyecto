@@ -1,26 +1,22 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, Any, Annotated
+from typing import Optional, Any
 from bson import ObjectId
 
-class PyObjectId(ObjectId):
+class PyObjectId(str):
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
 
     @classmethod
     def validate(cls, v):
-        if not ObjectId.is_valid(v):
+        if not ObjectId.is_valid(str(v)):
             raise ValueError("Invalid ObjectId")
-        return ObjectId(v)
+        return str(v)
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, _source_type, _handler):
-        return {
-            "type": "string",
-            "description": "ObjectId",
-            "custom_validator": lambda x: ObjectId(x) if isinstance(x, str) else x
-        }
+    def __get_pydantic_json_schema__(cls, _schema_generator):
+        return {"type": "string"}
 
 class MRI(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -31,8 +27,8 @@ class MRI(BaseModel):
     file_path: Optional[str] = None
 
     class Config:
+        populate_by_name = True
         json_encoders = {ObjectId: str}
-        allow_population_by_field_name = True
 
 class Diagnosis(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -43,8 +39,8 @@ class Diagnosis(BaseModel):
     confidence_score: Optional[float] = None
 
     class Config:
+        populate_by_name = True
         json_encoders = {ObjectId: str}
-        allow_population_by_field_name = True
 
 class Patient(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -56,5 +52,5 @@ class Patient(BaseModel):
     last_updated: datetime = Field(default_factory=datetime.now)
 
     class Config:
-        json_encoders = {ObjectId: str}
-        allow_population_by_field_name = True 
+        populate_by_name = True
+        json_encoders = {ObjectId: str} 
