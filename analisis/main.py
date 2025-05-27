@@ -100,45 +100,62 @@ async def analyze_mri(
     mri_id: str,
     current_user: dict = Depends(get_current_user)
 ):
-    # Get MRI record
-    mri = await db.mris.find_one({"_id": mri_id})
-    if not mri:
-        raise HTTPException(status_code=404, detail="MRI not found")
-    
-    # Generate random diagnosis
-    diagnosis_text = random.choice(SAMPLE_DIAGNOSES)
-    
-    # Create diagnosis record
-    diagnosis = Diagnosis(
-        mri_id=mri_id,
-        diagnosis_text=diagnosis_text,
-        analysis_date=datetime.now(),
-        analyzed_by=current_user["username"]
-    )
-    
-    # Save to database
-    result = await db.diagnoses.insert_one(diagnosis.dict())
-    
-    return {
-        "message": "Analysis completed",
-        "diagnosis": diagnosis_text,
-        "diagnosis_id": str(result.inserted_id)
-    }
+    try:
+        # Convertir el string ID a ObjectId
+        mri_object_id = ObjectId(mri_id)
+        
+        # Get MRI record
+        mri = await db.mris.find_one({"_id": mri_object_id})
+        if not mri:
+            raise HTTPException(status_code=404, detail="MRI not found")
+        
+        # Generate random diagnosis
+        diagnosis_text = random.choice(SAMPLE_DIAGNOSES)
+        
+        # Create diagnosis record
+        diagnosis = Diagnosis(
+            mri_id=mri_id,
+            diagnosis_text=diagnosis_text,
+            analysis_date=datetime.now(),
+            analyzed_by=current_user["username"]
+        )
+        
+        # Save to database
+        result = await db.diagnoses.insert_one(diagnosis.dict())
+        
+        return {
+            "message": "Analysis completed",
+            "diagnosis": diagnosis_text,
+            "diagnosis_id": str(result.inserted_id)
+        }
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=400, detail="Invalid MRI ID format")
 
 @app.get("/mri/{mri_id}/diagnosis")
 async def get_diagnosis(
     mri_id: str,
     current_user: dict = Depends(get_current_user)
 ):
-    diagnosis_doc = await db.diagnoses.find_one({"mri_id": mri_id})
-    if not diagnosis_doc:
-        raise HTTPException(status_code=404, detail="Diagnosis not found")
-    
-    # Convertir el ObjectId a string
-    diagnosis_doc["_id"] = str(diagnosis_doc["_id"])
-    diagnosis = Diagnosis(**diagnosis_doc)
-    
-    return diagnosis
+    try:
+        # Convertir el string ID a ObjectId
+        mri_object_id = ObjectId(mri_id)
+        
+        # Buscar el diagnóstico usando el ObjectId
+        diagnosis_doc = await db.diagnoses.find_one({"mri_id": mri_id})
+        if not diagnosis_doc:
+            raise HTTPException(status_code=404, detail="Diagnosis not found")
+        
+        # Convertir el ObjectId a string para el modelo
+        diagnosis_doc["_id"] = str(diagnosis_doc["_id"])
+        diagnosis = Diagnosis(**diagnosis_doc)
+        
+        return diagnosis
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=400, detail="Invalid MRI ID format")
 
 @app.get("/patient/{patient_id}/mris")
 async def get_patient_mris(
@@ -170,6 +187,33 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/mris")
+async def list_all_mris(
+    current_user: dict = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    """
+    Lista todos los MRIs cargados en el sistema con sus IDs.
+    Permite paginación usando skip y limit.
+    """
+    mris = []
+    async for mri_doc in db.mris.find().skip(skip).limit(limit):
+        # Convertir el ObjectId a string para el modelo
+        mri_doc["_id"] = str(mri_doc["_id"])
+        mri = MRI(**mri_doc)
+        mris.append(mri)
+    
+    # Obtener el total de documentos
+    total = await db.mris.count_documents({})
+    
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "mris": mris
+    }
 
 if __name__ == "__main__":
     import uvicorn
