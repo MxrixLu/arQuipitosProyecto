@@ -126,7 +126,7 @@ resources:
           sudo chmod 777 /app/uploads
           
           # Crear archivo .env
-          sudo tee .env << EOF
+          sudo tee .env > /dev/null <<EOF
           MONGODB_URL=mongodb://10.128.0.82:27017
           ALLOWED_ORIGINS=http://10.128.0.84:3000
           EVENTOS_URL=http://10.128.0.81:8080
@@ -183,7 +183,6 @@ resources:
           # Establecer permisos correctos
           sudo chown -R $USER:$USER /app/arQuipitosProyecto/analisis/frontend
           sudo chmod -R 755 /app/arQuipitosProyecto/analisis/frontend
-          
           # Instalar dependencias
           npm install
           
@@ -208,11 +207,4 @@ resources:
           # Iniciar la aplicación
           nohup ./start.sh > frontend.log 2>&1 &
           
-          # Verificar que el proceso está corriendo
-          sleep 5
-          if pgrep -f "serve -s build" > /dev/null; then
-              echo "La aplicación frontend se ha iniciado correctamente"
-          else
-              echo "Error al iniciar la aplicación frontend"
-              cat frontend.log
-          fi 
+          
