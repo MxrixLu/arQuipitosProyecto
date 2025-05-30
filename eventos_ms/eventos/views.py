@@ -5,8 +5,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from auth.auth0backend import getRole
 
+
+def is_admin(request):
+    return getRole(request) == "Administrador"
+
+
 @api_view(['GET', 'POST'])
 def eventos(request):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_eventos()
@@ -16,8 +23,11 @@ def eventos(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def evento_detail(request, evento_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_evento_by_id(evento_id)
@@ -29,8 +39,11 @@ def evento_detail(request, evento_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET', 'POST'])
 def pacientes(request):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_pacientes()
@@ -40,8 +53,11 @@ def pacientes(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def paciente_detail(request, paciente_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_paciente_by_id(paciente_id)
@@ -53,8 +69,11 @@ def paciente_detail(request, paciente_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET', 'POST'])
 def doctores(request):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_doctors()
@@ -64,8 +83,11 @@ def doctores(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def doctor_detail(request, doctor_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
         if request.method == 'GET':
             return logic.get_doctor_by_id(doctor_id)
@@ -77,34 +99,42 @@ def doctor_detail(request, doctor_id):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET'])
 def doctores_by_paciente(request, paciente_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
-        if request.method == 'GET':
-            return logic.doctores_of_paciente(paciente_id)
+        return logic.doctores_of_paciente(paciente_id)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['GET'])
 def pacientes_by_doctor(request, doctor_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
-        if request.method == 'GET':
-            return logic.pacientes_of_doctor(doctor_id)
+        return logic.pacientes_of_doctor(doctor_id)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['GET'])
 def get_eventos_by_paciente(request, paciente_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
-        if request.method == 'GET':
-            return logic.get_eventos_by_paciente(paciente_id)
+        return logic.get_eventos_by_paciente(paciente_id)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['GET'])
 def get_eventos_by_doctor(request, doctor_id):
+    if not is_admin(request):
+        return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     try:
-        if request.method == 'GET':
-            return logic.get_eventos_by_doctor(doctor_id)
+        return logic.get_eventos_by_doctor(doctor_id)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

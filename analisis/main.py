@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
@@ -43,7 +43,7 @@ except Exception as e:
 
 db = client.hospital_db
 
-# Sample diagnoses for random selection
+# Diagnósticos de ejemplo
 SAMPLE_DIAGNOSES = [
     "Normal brain MRI, no significant findings",
     "Mild cerebral atrophy",
@@ -56,6 +56,18 @@ SAMPLE_DIAGNOSES = [
     "Possible early signs of dementia",
     "Normal brain parenchyma"
 ]
+
+# ----------------------------
+# Función para verificar rol
+# ----------------------------
+
+async def check_role(request: Request, expected_role: str):
+    try:
+        role = await getRole(request)
+        if role != expected_role:
+            raise HTTPException(status_code=403, detail="Access forbidden: insufficient role")
+    except Exception as e:
+        raise HTTPException(status_code=403, detail=f"Role verification failed: {str(e)}")
 
 @app.get("/")
 async def root():
@@ -70,14 +82,14 @@ async def upload_mri(
         raise HTTPException(status_code=400, detail="File must be an image")
     
     try:
-        # Save the file
+        # Guardar archivo
         file_location = f"uploads/{file.filename}"
         os.makedirs("uploads", exist_ok=True)
         
         with open(file_location, "wb+") as file_object:
             file_object.write(await file.read())
         
-        # Create MRI record
+        # Crear registro MRI
         mri = MRI(
             filename=file.filename,
             upload_date=datetime.now(),
@@ -86,10 +98,9 @@ async def upload_mri(
             file_path=file_location
         )
         
-        # Save to database
         result = await db.mris.insert_one(mri.dict())
         
-        # Notify eventos service about new MRI upload
+        # Notificar al servicio de eventos
         try:
             async with httpx.AsyncClient() as client:
                 await client.post(
@@ -103,7 +114,6 @@ async def upload_mri(
                 )
         except Exception as e:
             print(f"Warning: Could not notify eventos service: {e}")
-            # Continue execution even if eventos notification fails
         
         return {"message": "MRI uploaded successfully", "mri_id": str(result.inserted_id)}
     except Exception as e:
@@ -128,7 +138,7 @@ async def analyze_mri(mri_id: str):
         
         result = await db.diagnoses.insert_one(diagnosis.dict())
         
-        # Notify eventos service about new diagnosis
+        # Notificar al servicio de eventos
         try:
             async with httpx.AsyncClient() as client:
                 await client.post(
@@ -143,7 +153,6 @@ async def analyze_mri(mri_id: str):
                 )
         except Exception as e:
             print(f"Warning: Could not notify eventos service: {e}")
-            # Continue execution even if eventos notification fails
         
         return {
             "message": "Analysis completed",
@@ -156,7 +165,8 @@ async def analyze_mri(mri_id: str):
         raise HTTPException(status_code=400, detail="Invalid MRI ID format")
 
 @app.get("/mri/{mri_id}/diagnosis")
-async def get_diagnosis(mri_id: str):
+async def get_diagnosis(mri_id: str, request: Request):
+    await check_role(request, "Medico")
     try:
         mri_object_id = ObjectId(mri_id)
         diagnosis_doc = await db.diagnoses.find_one({"mri_id": mri_id})
@@ -173,7 +183,8 @@ async def get_diagnosis(mri_id: str):
         raise HTTPException(status_code=400, detail="Invalid MRI ID format")
 
 @app.get("/patient/{patient_id}/mris")
-async def get_patient_mris(patient_id: str):
+async def get_patient_mris(patient_id: str, request: Request):
+    await check_role(request, "Medico")
     mris = []
     async for mri_doc in db.mris.find({"patient_id": patient_id}):
         mri_doc["_id"] = str(mri_doc["_id"])
@@ -183,7 +194,8 @@ async def get_patient_mris(patient_id: str):
     return mris
 
 @app.get("/mris")
-async def list_all_mris(skip: int = 0, limit: int = 100):
+async def list_all_mris(skip: int = 0, limit: int = 100, request: Request = None):
+    await check_role(request, "Medico")
     mris = []
     async for mri_doc in db.mris.find().skip(skip).limit(limit):
         mri_doc["_id"] = str(mri_doc["_id"])
@@ -201,4 +213,4 @@ async def list_all_mris(skip: int = 0, limit: int = 100):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host=HOST, port=PORT) 
+    uvicorn.run(app, host=HOST, port=PORT)
