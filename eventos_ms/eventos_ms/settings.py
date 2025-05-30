@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'eventos_ms',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb://eventos_user:tu_contraseña@34.173.157.100:27017/eventos_ms',
+            'host': 'mongodb://monitoring_user:isis2503@10.128.0.80:27017/eventos_ms',
         }
     }
 }
@@ -127,11 +127,9 @@ STATIC_URL = 'static/'
 # Media files (User uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 # MongoDB connection
 MONGO_CLI = os.environ.get('MONGO_CLIENT', 'mongodb://monitoring_user:isis2503@10.128.0.80:27017')
