@@ -130,3 +130,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_URL = "/login/auth0"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "https://dev-ykfkh2vqjfbywt1x.us.auth0.com/v2/logout?returnTo=http%3A%2F%2F34.70.33.110:8080"
+
+SOCIAL_AUTH_TRAILING_SLASH = False  # Remove end slash from routes
+SOCIAL_AUTH_AUTH0_DOMAIN = 'dev-ykfkh2vqjfbywt1x.us.auth0.com'
+SOCIAL_AUTH_AUTH0_KEY = 'yHCGCljqjCNA1uS9s0yxu2zBcioL6oeu'
+SOCIAL_AUTH_AUTH0_SECRET = 'yHCGCljqjCNA1uS9s0yxu2zBcioL6oeu'
+
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email',
+    'role',
+]
+
+AUTHENTICATION_BACKENDS = {
+    'auth.auth0backend.Auth0',  # Cambia 'monitoring' si tu módulo se llama diferente
+    'django.contrib.auth.backends.ModelBackend',
+}
+
