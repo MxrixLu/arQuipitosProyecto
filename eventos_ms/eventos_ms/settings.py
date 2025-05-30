@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'eventos',
+    'djongo',  # Add djongo here
 ]
 
 MIDDLEWARE = [
@@ -75,12 +76,16 @@ WSGI_APPLICATION = 'eventos_ms.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'eventos_ms',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb://eventos_user:tu_contraseña@34.173.157.100:27017/eventos_ms',
+        }
+    }
+}
 
 
 # Password validation
