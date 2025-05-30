@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio</title>
+</head>
+<body>
+    <h1>Bienvenido al sistema de monitoreo</h1>
+    <ul>
+        <li><a href="{% url 'eventos' %}">Eventos</a></li>
+        <li><a href="{% url 'analisis' %}">Análisis</a></li>
+        <li><a href="{% url 'login' %}?next=/">Iniciar sesión</a></li>
+    </ul>
+</body>
+</html>
