@@ -15,6 +15,6 @@ env/
 *.swp
 
 # Ignorar credenciales en Google Cloud o AWS
-*.json
+
 *.pem
 prueba/

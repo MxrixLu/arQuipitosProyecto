@@ -119,14 +119,23 @@ resources:
           python3 -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
+          
+          # Establecer permisos correctos
+          sudo chown -R $USER:$USER /app/arQuipitosProyecto/analisis
+          sudo chmod -R 755 /app/arQuipitosProyecto/analisis
+          sudo chmod 777 /app/uploads
+          
           # Crear archivo .env
-          echo "MONGODB_URL=mongodb://10.128.0.82:27017" > .env
-          echo "ALLOWED_ORIGINS=http://10.128.0.84:3000" >> .env
-          echo "EVENTOS_URL=http://10.128.0.81:8080" >> .env
-          echo "HOST=0.0.0.0" >> .env
-          echo "PORT=8000" >> .env
+          sudo tee .env << EOF
+          MONGODB_URL=mongodb://10.128.0.82:27017
+          ALLOWED_ORIGINS=http://10.128.0.84:3000
+          EVENTOS_URL=http://10.128.0.81:8080
+          HOST=0.0.0.0
+          PORT=8000
+          EOF
+          
           # Iniciar la aplicación
-          nohup python main.py &
+          nohup python3 main.py &
 
 # Frontend instance
 - type: compute.v1.instance
@@ -155,17 +164,55 @@ resources:
       - key: startup-script
         value: |
           #!/bin/bash
+          # Actualizar el sistema e instalar Node.js
           sudo apt-get update
           curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
           sudo apt-get install -y nodejs
+          
+          # Instalar serve globalmente
           sudo npm install -g serve
-          sudo mkdir /app
+          
+          # Crear directorio de la aplicación
+          sudo mkdir -p /app
           cd /app
+          
+          # Clonar el repositorio
           sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
           cd arQuipitosProyecto/analisis/frontend
+          
+          # Establecer permisos correctos
+          sudo chown -R $USER:$USER /app/arQuipitosProyecto/analisis/frontend
+          sudo chmod -R 755 /app/arQuipitosProyecto/analisis/frontend
+          
+          # Instalar dependencias
           npm install
+          
           # Crear archivo .env
-          echo "REACT_APP_API_BASE_URL=http://10.128.0.83:8000" > .env
+          sudo tee .env << EOF
+          REACT_APP_API_BASE_URL=http://10.128.0.83:8000
+          EOF
+          
+          # Construir la aplicación
           npm run build
+          
+          # Crear un script de inicio
+          sudo tee start.sh << EOF
+          #!/bin/bash
+          cd /app/arQuipitosProyecto/analisis/frontend
+          serve -s build -l 3000
+          EOF
+          
+          # Dar permisos de ejecución al script
+          sudo chmod +x start.sh
+          
           # Iniciar la aplicación
-          nohup serve -s build -l 3000 & 
+          nohup ./start.sh > frontend.log 2>&1 &
+          
+          # Verificar que el proceso está corriendo
+          sleep 5
+          if pgrep -f "serve -s build" > /dev/null; then
+              echo "La aplicación frontend se ha iniciado correctamente"
+          else
+              echo "Error al iniciar la aplicación frontend"
+              cat frontend.log
+          fi 
