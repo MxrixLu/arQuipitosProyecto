@@ -35,7 +35,7 @@ except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
     raise
 
-db = client.hospital_db
+db = client.get_database("hospital_db")
 
 # Sample diagnoses for random selection
 SAMPLE_DIAGNOSES = [
