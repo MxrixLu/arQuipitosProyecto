@@ -14,10 +14,16 @@ load_dotenv()
 
 app = FastAPI(title="Hospital MRI Analysis System")
 
+# Configuración desde variables de entorno
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+EVENTOS_URL = os.getenv("EVENTOS_URL", "http://localhost:8002")
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "8000"))
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,12 +31,11 @@ app.add_middleware(
 
 # MongoDB connection
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-EVENTOS_URL = os.getenv("EVENTOS_URL", "http://localhost:8002")
 
 try:
     client = AsyncIOMotorClient(MONGODB_URL)
     client.admin.command('ping')
-    print("Successfully connected to MongoDB Atlas!")
+    print("Successfully connected to MongoDB!")
 except Exception as e:
     print(f"Error connecting to MongoDB: {e}")
     raise
@@ -195,4 +200,4 @@ async def list_all_mris(skip: int = 0, limit: int = 100):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host=HOST, port=PORT) 

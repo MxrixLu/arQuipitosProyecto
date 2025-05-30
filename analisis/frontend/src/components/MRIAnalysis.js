@@ -16,6 +16,7 @@ import {
   DialogActions,
   TextField,
 } from '@mui/material';
+import config from '../config';
 
 const MRIAnalysis = () => {
   const [mris, setMris] = useState([]);
@@ -35,7 +36,7 @@ const MRIAnalysis = () => {
 
   const fetchMRIs = async () => {
     try {
-      const response = await fetch('http://localhost:8000/mris');
+      const response = await fetch(`${config.API_BASE_URL}/mris`);
       if (!response.ok) {
         throw new Error('Error al cargar los MRIs');
       }
@@ -53,7 +54,7 @@ const MRIAnalysis = () => {
     try {
       setLoadingDiagnosis(true);
       console.log('Fetching diagnosis for MRI:', mriId);
-      const response = await fetch(`http://localhost:8000/mri/${mriId}/diagnosis`);
+      const response = await fetch(`${config.API_BASE_URL}/mri/${mriId}/diagnosis`);
       console.log('Diagnosis response status:', response.status);
       
       if (!response.ok) {
@@ -79,7 +80,7 @@ const MRIAnalysis = () => {
 
   const handleAnalyze = async (mriId) => {
     try {
-      const response = await fetch(`http://localhost:8000/mri/${mriId}/analyze`, {
+      const response = await fetch(`${config.API_BASE_URL}/mri/${mriId}/analyze`, {
         method: 'POST',
       });
       if (!response.ok) {
@@ -121,7 +122,7 @@ const MRIAnalysis = () => {
       formData.append('file', selectedFile);
       formData.append('patient_id', patientId);
 
-      const response = await fetch('http://localhost:8000/mri/upload', {
+      const response = await fetch(`${config.API_BASE_URL}/mri/upload`, {
         method: 'POST',
         body: formData,
       });

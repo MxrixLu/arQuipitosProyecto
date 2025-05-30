@@ -1,0 +1,218 @@
+# ***************** Universidad de los Andes ***********************
+# ****** Departamento de Ingeniería de Sistemas y Computación ******
+# ********** Arquitectura y diseño de Software - ISIS2503 **********
+#
+# Infraestructura para microservicio de análisis
+# Elementos a desplegar:
+# 1. Firewalls:
+#    - analisis-firewall-backend
+#    - analisis-firewall-frontend
+#    - analisis-firewall-mongo
+# 2. Instancias MVs:
+#    - analisis-backend-instance
+#    - analisis-frontend-instance
+#    - analisis-mongo-instance
+
+resources:
+# Firewall rules
+- name: analisis-firewall-backend
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+    priority: 1000
+    direction: INGRESS
+    sourceRanges: 
+    - 0.0.0.0/0
+    targetTags:
+    - analisis-backend
+    allowed:
+    - IPProtocol: TCP
+      ports: 
+      - 8000
+
+- name: analisis-firewall-frontend
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+    priority: 1000
+    direction: INGRESS
+    sourceRanges: 
+    - 0.0.0.0/0
+    targetTags:
+    - analisis-frontend
+    allowed:
+    - IPProtocol: TCP
+      ports: 
+      - 3000
+
+- name: analisis-firewall-mongo
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+    priority: 1000
+    direction: INGRESS
+    sourceTags: 
+    - analisis-backend
+    targetTags:
+    - analisis-mongo
+    allowed:
+    - IPProtocol: TCP
+      ports: 
+      - 27017
+
+# MongoDB instance
+- type: compute.v1.instance
+  name: analisis-mongo-instance
+  properties:
+    zone: us-central1-a
+    machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/cos-cloud/global/images/cos-101-17162-386-64
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+      networkIP: 10.128.0.82
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    tags:
+      items: 
+      - analisis-mongo
+
+# Backend instance
+- type: compute.v1.instance
+  name: analisis-backend-instance
+  properties:
+    zone: us-central1-a
+    machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-medium
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+      networkIP: 10.128.0.83
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    tags:
+      items: 
+      - analisis-backend
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          sudo apt-get update
+          sudo apt install python3-pip python3-venv -y
+          sudo mkdir -p /app/uploads
+          cd /app
+          sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
+          cd arQuipitosProyecto/analisis
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          
+          # Establecer permisos correctos
+          sudo chown -R $USER:$USER /app/arQuipitosProyecto/analisis
+          sudo chmod -R 755 /app/arQuipitosProyecto/analisis
+          sudo chmod 777 /app/uploads
+          
+          # Crear archivo .env
+          sudo tee .env << EOF
+          MONGODB_URL=mongodb://10.128.0.82:27017
+          ALLOWED_ORIGINS=http://10.128.0.84:3000
+          EVENTOS_URL=http://10.128.0.81:8080
+          HOST=0.0.0.0
+          PORT=8000
+          EOF
+          
+          # Iniciar la aplicación
+          nohup python3 main.py &
+
+# Frontend instance
+- type: compute.v1.instance
+  name: analisis-frontend-instance
+  properties:
+    zone: us-central1-a
+    machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+    networkInterfaces:
+    - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+      networkIP: 10.128.0.84
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+    tags:
+      items: 
+      - analisis-frontend
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          #!/bin/bash
+          # Actualizar el sistema e instalar Node.js
+          sudo apt-get update
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Instalar serve globalmente
+          sudo npm install -g serve
+          
+          # Crear directorio de la aplicación
+          sudo mkdir -p /app
+          cd /app
+          
+          # Clonar el repositorio
+          sudo git clone https://github.com/MxrixLu/arQuipitosProyecto.git
+          cd arQuipitosProyecto/analisis/frontend
+          
+          # Establecer permisos correctos
+          sudo chown -R $USER:$USER /app/arQuipitosProyecto/analisis/frontend
+          sudo chmod -R 755 /app/arQuipitosProyecto/analisis/frontend
+          
+          # Instalar dependencias
+          npm install
+          
+          # Crear archivo .env
+          sudo tee .env << EOF
+          REACT_APP_API_BASE_URL=http://10.128.0.83:8000
+          EOF
+          
+          # Construir la aplicación
+          npm run build
+          
+          # Crear un script de inicio
+          sudo tee start.sh << EOF
+          #!/bin/bash
+          cd /app/arQuipitosProyecto/analisis/frontend
+          serve -s build -l 3000
+          EOF
+          
+          # Dar permisos de ejecución al script
+          sudo chmod +x start.sh
+          
+          # Iniciar la aplicación
+          nohup ./start.sh > frontend.log 2>&1 &
+          
+          # Verificar que el proceso está corriendo
+          sleep 5
+          if pgrep -f "serve -s build" > /dev/null; then
+              echo "La aplicación frontend se ha iniciado correctamente"
+          else
+              echo "Error al iniciar la aplicación frontend"
+              cat frontend.log
+          fi 
