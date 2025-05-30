@@ -1,0 +1,22 @@
+resources:
+  - type: compute.v1.instance
+    name: kong-instance
+    properties:
+      zone: us-central1-a
+      machineType: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/zones/us-central1-a/machineTypes/e2-micro
+      disks:
+        - deviceName: boot
+          type: PERSISTENT
+          boot: true
+          autoDelete: true
+          initializeParams:
+            sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
+          networkIP: 10.128.0.51
+          accessConfigs:
+            - name: External NAT
+              type: ONE_TO_ONE_NAT
+      tags:
+        items:
+          - circuit-breaker
