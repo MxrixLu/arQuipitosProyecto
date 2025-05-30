@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'auth_app',
-    'social_django'
+    'social_django',
+    'analisis',
+    'eventos_ms'
 ]
 
 MIDDLEWARE = [
@@ -82,7 +84,7 @@ DATABASES = {
          'NAME': 'monitoring_db',
          'USER': 'monitoring_user',
          'PASSWORD': 'isis2503',
-         'HOST': '10.128.0.60',
+         'HOST': '10.128.0.70',
          'PORT': '',
      }
 }
