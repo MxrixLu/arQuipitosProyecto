@@ -45,7 +45,7 @@ resources:
         sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
     networkInterfaces:
     - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
-      networkIP: 10.128.0.60
+      networkIP: 10.128.0.70
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
@@ -81,7 +81,7 @@ resources:
         sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20240307b
     networkInterfaces:
     - network: https://www.googleapis.com/compute/v1/projects/brainwave-project-453700/global/networks/default
-      networkIP: 10.128.0.61
+      networkIP: 10.128.0.71
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
