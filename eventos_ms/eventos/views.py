@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework import status
+from auth.auth0backend import getRole
 
 @api_view(['GET', 'POST'])
 def eventos(request):

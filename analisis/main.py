@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from models import MRI, Diagnosis
 from bson import ObjectId
 import httpx
+from auth.auth0backend import getRole
 
 load_dotenv()
 
