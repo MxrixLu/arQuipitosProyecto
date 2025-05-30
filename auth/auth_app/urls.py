@@ -1,9 +1,12 @@
-# mi_app/urls.py
-from django.urls import path
+from django.contrib import admin
+from django.urls import include, path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('eventos/', views.eventos_view, name='eventos'),
-    path('analisis/', views.analisis_view, name='analisis'),
+    path('admin/', admin.site.urls),
+    path('analisis/', include('analisis.urls')),
+    path('eventos/', include('eventos_ms.urls')),
+    path('auth/', include('django.contrib.auth.urls')),
+    path('social/', include('social_django.urls')),
+
 ]
